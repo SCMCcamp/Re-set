@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>🌍 全球共享留言墙</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px; min-height: 100vh; }
+        .app { max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: 28px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h1, h2 { color: #1e293b; }
+        .badge { background: #eef2ff; padding: 6px 14px; border-radius: 40px; font-size: 0.8rem; color: #4f46e5; display: inline-block; }
+        input, textarea { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 20px; font-size: 1rem; margin-bottom: 12px; font-family: inherit; }
+        button { background: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 40px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .msg-item { background: #f8fafc; border-radius: 20px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #4f46e5; }
+        .msg-name { font-weight: 700; color: #1e293b; }
+        .msg-time { font-size: 0.7rem; color: #94a3b8; float: right; }
+        .msg-content { margin-top: 8px; color: #334155; word-break: break-word; }
+        .delete-btn { background: #ef4444; padding: 4px 12px; font-size: 0.75rem; width: auto; margin-top: 8px; display: inline-block; }
+        .reply-btn { background: #e2e8f0; color: #334155; padding: 4px 12px; font-size: 0.75rem; width: auto; margin-right: 8px; }
+        .empty { text-align: center; color: #94a3b8; padding: 40px; }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        hr { margin: 15px 0; border-color: #eef2ff; }
+        small { color: #6c727f; }
+        .error-toast { background: #fee2e2; color: #dc2626; padding: 10px; border-radius: 16px; margin-bottom: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="card">
+        <h1>📮 全球留言墙</h1>
+        <p style="color: #6c727f; margin: 8px 0;">✨ 所有人看到的留言都是相同的 | 数据实时互通</p>
+        <div class="flex-row" style="margin-top: 15px;">
+            <input type="text" id="nickname" placeholder="你的昵称" style="flex:1; margin-bottom:0;">
+            <button id="setNameBtn" style="width: auto; padding: 12px 20px;">设置</button>
+        </div>
+        <div id="currentUser" class="badge" style="margin-top: 10px;">未设置昵称</div>
+    </div>
+
+    <div id="errorBox" style="display: none;" class="card error-toast"></div>
+
+    <div class="card">
+        <h2>📢 公开留言</h2>
+        <textarea id="publicContent" rows="2" placeholder="说点什么... 全世界都能看到"></textarea>
+        <button id="postPublicBtn">发布公开留言</button>
+        <hr>
+        <div id="publicList">加载中...</div>
+    </div>
+
+    <div class="card">
+        <h2>💌 私信</h2>
+        <input type="text" id="privateTo" placeholder="发给谁？输入对方昵称">
+        <textarea id="privateContent" rows="2" placeholder="悄悄话..."></textarea>
+        <button id="sendPrivateBtn">发送私信</button>
+        <hr>
+        <div id="privateList">加载中...</div>
+    </div>
+    <small>💾 数据存储在 Supabase 云端 | 全球用户实时共享</small>
+</div>
+
+<script>
+    // ==================== 你的 Supabase 配置 ====================
+    const SUPABASE_URL = "https://chfanuzhklzzawbcazjp.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf";
+    // ============================================================
+
+    let currentUser = "";
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            return m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;';
+        });
+    }
+
+    function formatTime(ts) {
+        let d = new Date(ts);
+        return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+    }
+
+    function showError(msg) {
+        let errorBox = document.getElementById("errorBox");
+        errorBox.innerText = "⚠️ " + msg;
+        errorBox.style.display = "block";
+        setTimeout(() => { errorBox.style.display = "none"; }, 5000);
+    }
+
+    // 加载公开留言
+    async function loadPublic() {
+        try {
+            let url = `${SUPABASE_URL}/rest/v1/public_messages?order=timestamp.desc`;
+            let res = await fetch(url, {
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+            
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            }
+            
+            let data = await res.json();
+            let container = document.getElementById("publicList");
+            
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="empty">✨ 第一条留言等你来写～</div>';
+                return;
+            }
+            
+            container.innerHTML = "";
+            data.forEach(msg => {
+                let isOwner = (currentUser === msg.username);
+                container.innerHTML += `
+                    <div class="msg-item">
+                        <div><span class="msg-name">${escapeHtml(msg.username)}</span> <span class="msg-time">${formatTime(msg.timestamp)}</span></div>
+                        <div class="msg-content">${escapeHtml(msg.content)}</div>
+                        ${isOwner ? `<button class="delete-btn" onclick="deletePublic(${msg.id})">🗑️ 删除</button>` : ''}
+                    </div>
+                `;
+            });
+        } catch(e) {
+            console.error("loadPublic error:", e);
+            document.getElementById("publicList").innerHTML = `<div class="empty">⚠️ 加载失败: ${e.message}</div>`;
+            showError("加载公开留言失败: " + e.message);
+        }
+    }
+
+    // 加载私信
+    async function loadPrivate() {
+        if (!currentUser) {
+            document.getElementById("privateList").innerHTML = '<div class="empty">请先设置昵称</div>';
+            return;
+        }
+        try {
+            let url = `${SUPABASE_URL}/rest/v1/private_messages?order=timestamp.desc`;
+            let res = await fetch(url, {
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+            
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            }
+            
+            let data = await res.json();
+            let related = data.filter(pm => pm.fromUser === currentUser || pm.toUser === currentUser);
+            let container = document.getElementById("privateList");
+            
+            if (related.length === 0) {
+                container.innerHTML = '<div class="empty">💌 暂无往来私信</div>';
+                return;
+            }
+            
+            container.innerHTML = "";
+            related.forEach(pm => {
+                let isSender = (pm.fromUser === currentUser);
+                let other = isSender ? pm.toUser : pm.fromUser;
+                let direction = isSender ? `📤 致 ${other}` : `📩 来自 ${other}`;
+                container.innerHTML += `
+                    <div class="msg-item">
+                        <div><span class="msg-name">${direction}</span> <span class="msg-time">${formatTime(pm.timestamp)}</span></div>
+                        <div class="msg-content">💬 ${escapeHtml(pm.content)}</div>
+                        <div>
+                            <button class="reply-btn" onclick="replyTo('${other}')">↩️ 回复</button>
+                            ${isSender ? `<button class="delete-btn" onclick="deletePrivate(${pm.id})">🗑️ 删除</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        } catch(e) {
+            console.error("loadPrivate error:", e);
+            document.getElementById("privateList").innerHTML = `<div class="empty">⚠️ 加载失败: ${e.message}</div>`;
+            showError("加载私信失败: " + e.message);
+        }
+    }
+
+    // 发布公开留言
+    async function postPublic() {
+        if (!currentUser) { alert("请先设置昵称"); return; }
+        let content = document.getElementById("publicContent").value.trim();
+        if (!content) { alert("内容不能为空"); return; }
+        
+        let btn = document.getElementById("postPublicBtn");
+        let originalText = btn.innerText;
+        btn.innerText = "发布中...";
+        btn.disabled = true;
+        
+        try {
+            let url = `${SUPABASE_URL}/rest/v1/public_messages`;
+            let res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: currentUser,
+                    content: content,
+                    timestamp: Date.now()
+                })
+            });
+            
+            if (res.ok) {
+                document.getElementById("publicContent").value = "";
+                await loadPublic();
+                alert("✅ 发布成功！");
+            } else {
+                let errorText = await res.text();
+                alert("发布失败: " + res.status + " " + errorText);
+            }
+        } catch(e) {
+            alert("网络错误：" + e.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // 发送私信
+    async function sendPrivate() {
+        if (!currentUser) { alert("请先设置昵称"); return; }
+        let toUser = document.getElementById("privateTo").value.trim();
+        let content = document.getElementById("privateContent").value.trim();
+        if (!toUser) { alert("请输入接收人"); return; }
+        if (toUser === currentUser) { alert("不能发给自己"); return; }
+        if (!content) { alert("内容不能为空"); return; }
+        
+        let btn = document.getElementById("sendPrivateBtn");
+        let originalText = btn.innerText;
+        btn.innerText = "发送中...";
+        btn.disabled = true;
+        
+        try {
+            let url = `${SUPABASE_URL}/rest/v1/private_messages`;
+            let res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "apikey": SUPABASE_ANON_KEY,
+                    "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    fromUser: currentUser,
+                    toUser: toUser,
+                    content: content,
+                    timestamp: Date.now()
+                })
+            });
+            
+            if (res.ok) {
+                document.getElementById("privateTo").value = "";
+                document.getElementById("privateContent").value = "";
+                await loadPrivate();
+                alert("✅ 私信已发送！");
+            } else {
+                let errorText = await res.text();
+                alert("发送失败: " + res.status + " " + errorText);
+            }
+        } catch(e) {
+            alert("网络错误：" + e.message);
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+
+    // 删除公开留言
+    async function deletePublic(id) {
+        if (!confirm("确定删除吗？")) return;
+        let url = `${SUPABASE_URL}/rest/v1/public_messages?id=eq.${id}`;
+        await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        await loadPublic();
+    }
+
+    // 删除私信
+    async function deletePrivate(id) {
+        if (!confirm("确定删除吗？")) return;
+        let url = `${SUPABASE_URL}/rest/v1/private_messages?id=eq.${id}`;
+        await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
+        });
+        await loadPrivate();
+    }
+
+    function replyTo(name) {
+        document.getElementById("privateTo").value = name;
+        document.getElementById("privateContent").focus();
+    }
+
+    function setCurrentUser(name) {
+        if (!name.trim()) return;
+        currentUser = name.trim();
+        localStorage.setItem("wall_user", currentUser);
+        document.getElementById("currentUser").innerHTML = `当前用户：${escapeHtml(currentUser)}`;
+        loadPrivate();
+    }
+
+    async function init() {
+        let saved = localStorage.getItem("wall_user");
+        if (saved) {
+            currentUser = saved;
+            document.getElementById("currentUser").innerHTML = `当前用户：${escapeHtml(currentUser)}`;
+        }
+        document.getElementById("nickname").value = currentUser || "";
+        document.getElementById("setNameBtn").onclick = () => setCurrentUser(document.getElementById("nickname").value);
+        document.getElementById("postPublicBtn").onclick = postPublic;
+        document.getElementById("sendPrivateBtn").onclick = sendPrivate;
+        
+        await loadPublic();
+        if (currentUser) await loadPrivate();
+        
+        setInterval(async () => {
+            await loadPublic();
+            if (currentUser) await loadPrivate();
+        }, 5000);
+    }
+    
+    init();
+</script>
+</body>
+</html>
