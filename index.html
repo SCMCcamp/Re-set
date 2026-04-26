@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RE:Set 留言墙 | 便利贴 + 私信</title>
     <style>
-        /* 保持原有样式不变，为节省篇幅此处省略，使用之前已确认的完整样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #f0ebe1;
@@ -16,45 +15,122 @@
             min-height: 100vh;
         }
         .app { max-width: 1400px; margin: 0 auto; }
-        .logo-card { background: white; border-radius: 28px; padding: 12px 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        .logo-card {
+            background: white;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
         .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
         .logo-text h1 { color: #547443; font-size: 1.4rem; }
         .logo-text p { color: #8b7a66; font-size: 0.7rem; }
+        
         .user-menu { position: relative; cursor: pointer; }
-        .user-badge { background: #e8f0e5; padding: 8px 16px; border-radius: 40px; font-size: 0.85rem; color: #547443; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .user-badge {
+            background: #e8f0e5;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #547443;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
         .user-badge:hover { background: #d4e0cd; }
-        .user-dropdown { position: absolute; top: 50px; right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 180px; z-index: 100; overflow: hidden; display: none; }
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-width: 180px;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+        }
         .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; border-bottom: 1px solid #edf2f7; }
         .dropdown-item:hover { background: #f8fafc; }
+        
         .tab-nav { display: flex; gap: 12px; margin-bottom: 24px; background: transparent; border-radius: 60px; padding: 0; }
         .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         .tab-btn.active { background: #547443; color: white; box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .nickname-card { background: white; border-radius: 24px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        
+        .nickname-card {
+            background: white;
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
         .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
         .nickname-group input:focus { outline: none; border-color: #547443; }
-        .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
         .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .nickname-group button:hover { background: #3d5c30; }
+        
         .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
         .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
         .admin-actions button:hover { background: #b85e00; }
         .admin-actions .exit-admin { background: #64748b; }
-        .whiteboard { background: #fdf8ed; border-radius: 32px; padding: 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #e8dcc8; }
+        
+        .whiteboard {
+            background: #fdf8ed;
+            border-radius: 32px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid #e8dcc8;
+        }
         .whiteboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px dashed #d4c5a8; }
         .whiteboard-header h2 { color: #5c4b2e; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
         .sticky-input { background: #fffef7; border-radius: 20px; padding: 15px; margin-bottom: 25px; border: 1px solid #e8e0d0; }
         .sticky-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e0d5c0; border-radius: 20px; font-size: 1rem; font-family: inherit; background: white; resize: vertical; }
         .sticky-input textarea:focus { outline: none; border-color: #547443; }
-        .sticky-input button { margin-top: 12px; background: #547443; border: none; padding: 14px 24px; border-radius: 60px; color: white; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: 0.2s; }
+        .sticky-input button {
+            margin-top: 12px;
+            background: #547443;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
         .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        .sticky-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; max-height: 550px; overflow-y: auto; padding: 5px; }
-        .sticky-note { background: #fffaec; padding: 16px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; border-left: 6px solid #547443; }
+        
+        .sticky-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-height: 550px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        .sticky-note {
+            background: #fffaec;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            border-left: 6px solid #547443;
+        }
         .sticky-note:hover { transform: translateY(-3px); }
         .sticky-note:nth-child(odd) { rotate: -0.5deg; }
         .sticky-note:nth-child(even) { rotate: 0.8deg; }
@@ -65,13 +141,47 @@
         .sticky-footer { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
         .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; }
         .delete-sticky:hover { background: #fee2e2; color: #dc2626; }
+        
         .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
-        .contact-list { width: 280px; background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-        .contact-header { background: #547443; color: white; padding: 18px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-        .new-chat-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 16px; border-radius: 40px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .contact-list {
+            width: 280px;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .contact-header {
+            background: #547443;
+            color: white;
+            padding: 18px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .new-chat-btn {
+            background: rgba(255,255,255,0.25);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
         .new-chat-btn:hover { background: rgba(255,255,255,0.4); }
         .contact-items { flex: 1; overflow-y: auto; max-height: 520px; }
-        .contact-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #edf2f7; cursor: pointer; transition: 0.15s; }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid #edf2f7;
+            cursor: pointer;
+            transition: 0.15s;
+        }
         .contact-item:hover { background: #f8fafc; }
         .contact-item.active { background: #e8f0e5; border-left: 4px solid #547443; }
         .contact-avatar { width: 44px; height: 44px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 1.1rem; }
@@ -80,40 +190,125 @@
         .contact-preview { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
         .contact-badge { background: #54744320; padding: 2px 8px; border-radius: 30px; font-size: 0.6rem; color: #547443; }
         .empty-contact { text-align: center; color: #94a3b8; padding: 40px; font-style: italic; }
-        .chat-area { flex: 1; background: white; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .chat-header { background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #edf2f7; display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+        
+        .chat-area {
+            flex: 1;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .chat-header {
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: space-between;
+        }
         .chat-header .avatar { width: 40px; height: 40px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; }
         .chat-header h3 { color: #1e293b; flex: 1; }
         .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; cursor: pointer; }
         .delete-user-btn:hover { background: #dc2626; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9fafc; min-height: 400px; max-height: 450px; }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f9fafc;
+            min-height: 400px;
+            max-height: 450px;
+        }
         .chat-bubble { display: flex; flex-direction: column; max-width: 80%; }
         .bubble-sent { align-self: flex-end; }
         .bubble-received { align-self: flex-start; }
-        .bubble-content { padding: 10px 16px; border-radius: 22px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+        .bubble-content {
+            padding: 10px 16px;
+            border-radius: 22px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            word-break: break-word;
+        }
         .bubble-sent .bubble-content { background: #547443; color: white; border-bottom-right-radius: 6px; }
         .bubble-received .bubble-content { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 6px; }
         .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; justify-content: flex-end; }
-        .chat-input-area { padding: 16px; background: white; border-top: 1px solid #edf2f7; display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; }
+        .chat-input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #edf2f7;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
         .chat-input-area input:focus { outline: none; border-color: #547443; }
-        .chat-input-area button { background: #547443; border: none; color: white; padding: 0 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .chat-input-area button {
+            background: #547443;
+            border: none;
+            color: white;
+            padding: 0 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
         .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .modal-container { background: white; border-radius: 32px; padding: 24px; width: 360px; max-width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3); animation: modalFadeIn 0.2s ease; }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-container {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            width: 360px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.2s ease;
+        }
         @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-container h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
         .modal-search:focus { outline: none; border-color: #547443; }
         .user-list-modal { max-height: 350px; overflow-y: auto; }
-        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid #edf2f7; }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8px;
+            border-bottom: 1px solid #edf2f7;
+        }
         .user-avatar-small { width: 32px; height: 32px; background: #e8e0d0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 0.8rem; margin-right: 10px; }
         .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
         .user-select-btn:hover { background: #3d5c30; }
         .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
         .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
         .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        
         footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
+        
         @media (max-width: 700px) {
             .private-layout { flex-direction: column; }
             .contact-list { width: 100%; max-height: 300px; }
@@ -141,7 +336,7 @@
 
     <div class="nickname-card">
         <div class="nickname-group">
-            <input type="text" id="nicknameInput" placeholder="输入昵称（仅一次）">
+            <input type="text" id="nicknameInput" placeholder="输入你的昵称">
             <button id="setNameBtn">设置昵称</button>
         </div>
         <div id="adminActions" class="admin-actions">
@@ -182,7 +377,7 @@
     <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
     <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
     <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
-    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话</footer>
+    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话 | 关闭网页后需要重新设置昵称</footer>
 </div>
 
 <script>
@@ -390,25 +585,29 @@
     async function deletePublic(id) { if (!confirm("撕掉这张便利贴？")) return; await fetchAPI(`public_messages?id=eq.${id}`, { method: "DELETE" }); await loadPublic(); }
     async function deletePrivateMsg(id) { if (!confirm("删除这条消息？")) return; await fetchAPI(`private_messages?id=eq.${id}`, { method: "DELETE" }); if (currentContact) await selectContact(currentContact, false); await loadContacts(); }
 
+    // 设置昵称 - 没有 localStorage 持久化
     async function setUserName() {
         let newName = document.getElementById("nicknameInput").value.trim();
-        if (!newName) return;
-        if (localStorage.getItem("wall_user_final")) { alert("昵称已设置不可更改"); return; }
-        let res = await fetchAPI(`public_messages?select=username`);
-        let existing = await res.json();
-        let usedNames = new Set(existing.map(m => m.username));
-        if (usedNames.has(newName)) { alert("昵称已被使用"); return; }
+        if (!newName) { alert("请输入昵称"); return; }
+        
+        // 检查昵称是否已被使用
+        let users = await getAllUsers(true);
+        if (users.includes(newName)) { 
+            alert("❌ 该昵称已被使用，请换一个"); 
+            return; 
+        }
+        
         currentUser = newName;
-        localStorage.setItem("wall_user_final", currentUser);
         document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
         document.getElementById("nicknameInput").disabled = true;
         document.getElementById("setNameBtn").disabled = true;
         document.getElementById("nicknameInput").value = currentUser;
+        
         await loadContacts();
-        await getAllUsers(true);
+        alert(`✅ 昵称 "${currentUser}" 设置成功！`);
     }
 
-    // ✅ 核心修复：管理员修改用户名（保留所有聊天记录）
+    // 管理员修改用户名（保留所有聊天记录）
     async function adminChangeName() {
         let oldName = prompt("输入要修改的用户昵称：");
         if (!oldName) return;
@@ -418,34 +617,24 @@
         // 1. 更新公开留言中的用户名
         let publics = await (await fetchAPI(`public_messages?username=eq.${oldName}`)).json();
         for (let msg of publics) {
-            await fetchAPI(`public_messages?id=eq.${msg.id}`, { 
-                method: "PATCH", 
-                body: JSON.stringify({ username: newName }) 
-            });
+            await fetchAPI(`public_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ username: newName }) });
         }
         
         // 2. 更新私信中的用户名（作为发送者）
         let sentPrivates = await (await fetchAPI(`private_messages?fromUser=eq.${oldName}`)).json();
         for (let msg of sentPrivates) {
-            await fetchAPI(`private_messages?id=eq.${msg.id}`, { 
-                method: "PATCH", 
-                body: JSON.stringify({ fromUser: newName }) 
-            });
+            await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ fromUser: newName }) });
         }
         
         // 3. 更新私信中的用户名（作为接收者）
         let receivedPrivates = await (await fetchAPI(`private_messages?toUser=eq.${oldName}`)).json();
         for (let msg of receivedPrivates) {
-            await fetchAPI(`private_messages?id=eq.${msg.id}`, { 
-                method: "PATCH", 
-                body: JSON.stringify({ toUser: newName }) 
-            });
+            await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ toUser: newName }) });
         }
         
-        // 4. 如果当前用户就是被修改的用户，更新本地存储和界面
+        // 4. 如果当前用户就是被修改的用户，更新界面
         if (currentUser === oldName) {
             currentUser = newName;
-            localStorage.setItem("wall_user_final", newName);
             document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
             document.getElementById("nicknameInput").value = currentUser;
         }
@@ -531,14 +720,7 @@
         window.sendToCurrent = sendToCurrent;
         window.openChatWithUser = openChatWithUser;
         
-        let saved = localStorage.getItem("wall_user_final");
-        if (saved) {
-            currentUser = saved;
-            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
-            document.getElementById("nicknameInput").disabled = true;
-            document.getElementById("setNameBtn").disabled = true;
-            document.getElementById("nicknameInput").value = currentUser;
-        }
+        // 不再从 localStorage 读取昵称
         document.getElementById("setNameBtn").onclick = setUserName;
         document.getElementById("adminLoginBtn").onclick = openAdminLogin;
         document.getElementById("confirmAdminLogin").onclick = verifyAdmin;
@@ -557,7 +739,9 @@
         document.getElementById("chatMessageInput").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendToCurrent(); });
         
         await loadPublic();
+        // 注意：不在页面加载时自动恢复 user，需要手动设置昵称
         if (currentUser) await loadContacts();
+        
         setInterval(async () => {
             await loadPublic();
             if (currentUser) {
