@@ -80,8 +80,10 @@
         .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
         .nickname-group input:focus { outline: none; border-color: #547443; }
+        .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
         .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .nickname-group button:hover { background: #3d5c30; }
+        .nickname-group button:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
         .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
@@ -377,7 +379,7 @@
     <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
     <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
     <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
-    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话 | 关闭网页后需要重新设置昵称</footer>
+    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话 | 昵称会自动保存，刷新不丢失</footer>
 </div>
 
 <script>
@@ -585,7 +587,7 @@
     async function deletePublic(id) { if (!confirm("撕掉这张便利贴？")) return; await fetchAPI(`public_messages?id=eq.${id}`, { method: "DELETE" }); await loadPublic(); }
     async function deletePrivateMsg(id) { if (!confirm("删除这条消息？")) return; await fetchAPI(`private_messages?id=eq.${id}`, { method: "DELETE" }); if (currentContact) await selectContact(currentContact, false); await loadContacts(); }
 
-    // 设置昵称 - 没有 localStorage 持久化
+    // ✅ 设置昵称 - 持久化保存到 localStorage
     async function setUserName() {
         let newName = document.getElementById("nicknameInput").value.trim();
         if (!newName) { alert("请输入昵称"); return; }
@@ -598,13 +600,15 @@
         }
         
         currentUser = newName;
+        // 保存到 localStorage，刷新页面不会丢失
+        localStorage.setItem("wall_user_saved", currentUser);
         document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
         document.getElementById("nicknameInput").disabled = true;
         document.getElementById("setNameBtn").disabled = true;
         document.getElementById("nicknameInput").value = currentUser;
         
         await loadContacts();
-        alert(`✅ 昵称 "${currentUser}" 设置成功！`);
+        alert(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
     }
 
     // 管理员修改用户名（保留所有聊天记录）
@@ -632,9 +636,10 @@
             await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ toUser: newName }) });
         }
         
-        // 4. 如果当前用户就是被修改的用户，更新界面
+        // 4. 如果当前用户就是被修改的用户，更新界面和 localStorage
         if (currentUser === oldName) {
             currentUser = newName;
+            localStorage.setItem("wall_user_saved", currentUser);
             document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
             document.getElementById("nicknameInput").value = currentUser;
         }
@@ -720,7 +725,16 @@
         window.sendToCurrent = sendToCurrent;
         window.openChatWithUser = openChatWithUser;
         
-        // 不再从 localStorage 读取昵称
+        // ✅ 从 localStorage 读取保存的昵称
+        let savedUser = localStorage.getItem("wall_user_saved");
+        if (savedUser && savedUser.trim() !== "") {
+            currentUser = savedUser;
+            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
+            document.getElementById("nicknameInput").disabled = true;
+            document.getElementById("setNameBtn").disabled = true;
+            document.getElementById("nicknameInput").value = currentUser;
+        }
+        
         document.getElementById("setNameBtn").onclick = setUserName;
         document.getElementById("adminLoginBtn").onclick = openAdminLogin;
         document.getElementById("confirmAdminLogin").onclick = verifyAdmin;
@@ -739,7 +753,6 @@
         document.getElementById("chatMessageInput").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendToCurrent(); });
         
         await loadPublic();
-        // 注意：不在页面加载时自动恢复 user，需要手动设置昵称
         if (currentUser) await loadContacts();
         
         setInterval(async () => {
