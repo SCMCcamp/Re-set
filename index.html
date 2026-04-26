@@ -19,7 +19,7 @@
         .logo-card {
             background: white;
             border-radius: 28px;
-            padding: 16px 24px;
+            padding: 12px 20px;
             margin-bottom: 24px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
@@ -28,11 +28,41 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { background: #547443; width: 50px; height: 50px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.6rem; }
-        .logo-text h1 { color: #547443; font-size: 1.6rem; }
+        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
+        .logo-text h1 { color: #547443; font-size: 1.4rem; }
         .logo-text p { color: #8b7a66; font-size: 0.7rem; }
-        .user-badge { background: #e8f0e5; padding: 8px 18px; border-radius: 40px; font-size: 0.85rem; color: #547443; font-weight: 500; }
+        
+        .user-menu { position: relative; cursor: pointer; }
+        .user-badge {
+            background: #e8f0e5;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #547443;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .user-badge:hover { background: #d4e0cd; }
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-width: 180px;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+        }
+        .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; border-bottom: 1px solid #edf2f7; }
+        .dropdown-item:hover { background: #f8fafc; }
         
         .tab-nav { display: flex; gap: 12px; margin-bottom: 24px; background: transparent; border-radius: 60px; padding: 0; }
         .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
@@ -40,32 +70,25 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .user-card {
+        .nickname-card {
             background: white;
             border-radius: 24px;
             padding: 16px 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
         }
         .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .nickname-group input { padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
+        .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
         .nickname-group input:focus { outline: none; border-color: #547443; }
+        .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
         .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .nickname-group button:hover { background: #3d5c30; transform: scale(0.97); }
+        .nickname-group button:hover { background: #3d5c30; }
+        .nickname-group button:disabled { opacity: 0.5; cursor: not-allowed; }
         
-        .admin-section { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .admin-section input { padding: 8px 12px; border: 1.5px solid #e2e8f0; border-radius: 40px; width: 130px; background: white; font-size: 0.85rem; }
-        .admin-section input:focus { outline: none; border-color: #d97706; }
-        .admin-section button { background: #d97706; padding: 8px 16px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .admin-section button:hover { background: #b85e00; transform: scale(0.97); }
-        .admin-section .exit-admin { background: #64748b; }
-        .admin-section .exit-admin:hover { background: #475569; }
-        .admin-badge { background: #fef3c7; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; color: #d97706; margin-left: 10px; }
+        .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
+        .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .admin-actions button:hover { background: #b85e00; }
+        .admin-actions .exit-admin { background: #64748b; }
         
         .whiteboard {
             background: #fdf8ed;
@@ -74,34 +97,11 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.08);
             border: 1px solid #e8dcc8;
         }
-        .whiteboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px dashed #d4c5a8;
-        }
+        .whiteboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px dashed #d4c5a8; }
         .whiteboard-header h2 { color: #5c4b2e; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
-        .sticky-input {
-            background: #fffef7;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 25px;
-            border: 1px solid #e8e0d0;
-        }
-        .sticky-input textarea {
-            width: 100%;
-            padding: 14px;
-            border: 1.5px solid #e0d5c0;
-            border-radius: 20px;
-            font-size: 1rem;
-            font-family: inherit;
-            background: white;
-            resize: vertical;
-            transition: 0.2s;
-        }
-        .sticky-input textarea:focus { outline: none; border-color: #547443; box-shadow: 0 0 0 3px rgba(84,116,67,0.1); }
+        .sticky-input { background: #fffef7; border-radius: 20px; padding: 15px; margin-bottom: 25px; border: 1px solid #e8e0d0; }
+        .sticky-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e0d5c0; border-radius: 20px; font-size: 1rem; font-family: inherit; background: white; resize: vertical; }
+        .sticky-input textarea:focus { outline: none; border-color: #547443; }
         .sticky-input button {
             margin-top: 12px;
             background: #547443;
@@ -114,10 +114,8 @@
             cursor: pointer;
             width: 100%;
             transition: 0.2s;
-            font-family: inherit;
         }
         .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        .sticky-input button:active { transform: translateY(0); }
         
         .sticky-grid {
             display: grid;
@@ -134,7 +132,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             transition: transform 0.2s;
             border-left: 6px solid #547443;
-            break-inside: avoid;
         }
         .sticky-note:hover { transform: translateY(-3px); }
         .sticky-note:nth-child(odd) { rotate: -0.5deg; }
@@ -144,7 +141,7 @@
         .sticky-time { font-size: 0.65rem; color: #aa9f89; }
         .sticky-content { font-size: 0.9rem; line-height: 1.45; color: #3d3522; word-break: break-word; }
         .sticky-footer { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
-        .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; transition: 0.2s; }
+        .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; }
         .delete-sticky:hover { background: #fee2e2; color: #dc2626; }
         
         .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
@@ -175,9 +172,8 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: 0.2s;
-            font-weight: 500;
         }
-        .new-chat-btn:hover { background: rgba(255,255,255,0.4); transform: scale(0.97); }
+        .new-chat-btn:hover { background: rgba(255,255,255,0.4); }
         .contact-items { flex: 1; overflow-y: auto; max-height: 520px; }
         .contact-item {
             display: flex;
@@ -217,8 +213,8 @@
         }
         .chat-header .avatar { width: 40px; height: 40px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; }
         .chat-header h3 { color: #1e293b; flex: 1; }
-        .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .delete-user-btn:hover { background: #dc2626; transform: scale(0.96); }
+        .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; cursor: pointer; }
+        .delete-user-btn:hover { background: #dc2626; }
         
         .chat-messages {
             flex: 1;
@@ -243,8 +239,7 @@
         }
         .bubble-sent .bubble-content { background: #547443; color: white; border-bottom-right-radius: 6px; }
         .bubble-received .bubble-content { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 6px; }
-        .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; }
-        .bubble-sent .bubble-info { justify-content: flex-end; }
+        .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; justify-content: flex-end; }
         .chat-input-area {
             padding: 16px;
             background: white;
@@ -258,7 +253,6 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 40px;
             font-size: 0.9rem;
-            background: white;
         }
         .chat-input-area input:focus { outline: none; border-color: #547443; }
         .chat-input-area button {
@@ -269,12 +263,10 @@
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.2s;
         }
-        .chat-input-area button:hover { background: #3d5c30; transform: scale(0.97); }
         .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
         
-        /* 统一弹窗样式 */
+        /* 弹窗样式 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -292,40 +284,18 @@
             background: white;
             border-radius: 32px;
             padding: 24px;
-            width: 400px;
+            width: 360px;
             max-width: 90%;
             max-height: 80vh;
             overflow-y: auto;
             box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3);
             animation: modalFadeIn 0.2s ease;
         }
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .modal-container h3 {
-            font-size: 1.3rem;
-            color: #1e293b;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .modal-search {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-            background: #fefefe;
-        }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-container h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
         .modal-search:focus { outline: none; border-color: #547443; }
-        .user-list-modal {
-            max-height: 350px;
-            overflow-y: auto;
-            margin-top: 8px;
-        }
+        .user-list-modal { max-height: 350px; overflow-y: auto; }
         .user-item {
             display: flex;
             justify-content: space-between;
@@ -333,71 +303,18 @@
             padding: 12px 8px;
             border-bottom: 1px solid #edf2f7;
         }
-        .user-item:last-child { border-bottom: none; }
-        .user-name {
-            font-weight: 500;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: #e8e0d0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #547443;
-            font-size: 0.8rem;
-        }
-        .user-delete-btn {
-            background: #ef4444;
-            border: none;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .user-delete-btn:hover { background: #dc2626; }
-        .user-select-btn {
-            background: #547443;
-            border: none;
-            color: white;
-            padding: 4px 16px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .user-avatar-small { width: 32px; height: 32px; background: #e8e0d0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 0.8rem; margin-right: 10px; }
+        .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
         .user-select-btn:hover { background: #3d5c30; }
-        
         .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
-        .modal-buttons button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-            border: none;
-        }
-        .modal-buttons button:first-child { background: #547443; color: white; }
-        .modal-buttons button:first-child:hover { background: #3d5c30; transform: scale(0.98); }
+        .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
         .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        .modal-buttons button:last-child:hover { background: #e2e8f0; }
         
         footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
         
         @media (max-width: 700px) {
             .private-layout { flex-direction: column; }
-            .contact-list { width: 100%; max-height: 250px; }
-            .modal-container { width: 340px; padding: 20px; }
+            .contact-list { width: 100%; max-height: 300px; }
             .tab-btn { font-size: 0.9rem; padding: 12px 16px; }
         }
     </style>
@@ -412,22 +329,25 @@
                 <p>便利贴白板 · 私信聊天室</p>
             </div>
         </div>
-        <div class="user-badge" id="currentUserBadge">未设置昵称</div>
+        <div class="user-menu" id="userMenu">
+            <div class="user-badge" id="currentUserBadge">👤 未设置昵称 ▼</div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item" id="adminLoginBtn">🔐 管理员登录</div>
+            </div>
+        </div>
     </div>
 
-    <div class="user-card">
+    <div class="nickname-card">
         <div class="nickname-group">
             <input type="text" id="nicknameInput" placeholder="输入昵称（仅一次）">
             <button id="setNameBtn">设置昵称</button>
         </div>
-        <div class="admin-section">
-            <input type="password" id="adminPassword" placeholder="管理员密码">
-            <button id="verifyAdminBtn">验证</button>
-            <button id="exitAdminBtn" class="exit-admin" style="display:none;">退出管理员</button>
-            <button id="resetNameBtn" style="display:none; background:#d97706;">✏️改昵称</button>
-            <button id="showUsersBtn" style="display:none; background:#d97706;">📋用户列表</button>
+        <div id="adminActions" class="admin-actions">
+            <button id="resetNameBtn">✏️ 修改任意昵称</button>
+            <button id="showUsersBtn">📋 用户列表</button>
+            <button id="exitAdminBtn" class="exit-admin">🚪 退出管理员</button>
         </div>
-        <span id="adminBadge" class="admin-badge" style="display:none;">👑 管理员模式</span>
+        <span id="adminBadge" style="display:none; font-size:0.7rem; color:#d97706; margin-left:10px;">👑 管理员模式</span>
     </div>
 
     <div class="tab-nav">
@@ -470,30 +390,30 @@
                     <div class="empty-chat">💬 从左列表选择一个联系人开始聊天</div>
                 </div>
                 <div class="chat-input-area" id="chatInputArea" style="display: none;">
-                    <input type="text" id="chatMessageInput" placeholder="输入消息...">
+                    <input type="text" id="chatMessageInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter') sendToCurrent()">
                     <button id="sendChatBtn">发送</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 新聊天弹窗（带用户搜索） -->
-    <div id="newChatModal" style="display:none;">
+    <!-- 新聊天搜索弹窗 -->
+    <div id="searchUserModal" style="display:none;">
         <div class="modal-overlay">
             <div class="modal-container">
-                <h3>💬 发起新聊天</h3>
-                <input type="text" id="searchUserInput" class="modal-search" placeholder="🔍 搜索用户昵称...">
-                <div id="userSearchResults" class="user-list-modal">
-                    <div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>
+                <h3>🔍 搜索用户</h3>
+                <input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称...">
+                <div id="searchResults" class="user-list-modal">
+                    <div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div>
                 </div>
                 <div class="modal-buttons">
-                    <button id="cancelNewChat">取消</button>
+                    <button id="closeSearchModal">关闭</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 用户列表弹窗（管理员用，统一风格） -->
+    <!-- 管理员用户列表弹窗 -->
     <div id="userListModal" style="display:none;">
         <div class="modal-overlay">
             <div class="modal-container">
@@ -508,8 +428,22 @@
             </div>
         </div>
     </div>
+
+    <!-- 管理员登录弹窗 -->
+    <div id="adminLoginModal" style="display:none;">
+        <div class="modal-overlay">
+            <div class="modal-container">
+                <h3>🔐 管理员登录</h3>
+                <input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码">
+                <div class="modal-buttons">
+                    <button id="confirmAdminLogin">登录</button>
+                    <button id="cancelAdminLogin">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
-    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见</footer>
+    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话</footer>
 </div>
 
 <script>
@@ -521,6 +455,7 @@
     let isAdmin = false;
     let currentContact = null;
     let allUsersCache = [];
+    let lastUserListUpdate = 0;
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
     function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
@@ -533,29 +468,59 @@
         return res;
     }
 
-    // 获取所有用户
-    async function getAllUsers() {
+    // 获取所有用户（实时从数据库获取）
+    async function getAllUsers(forceRefresh = true) {
         let users = new Set();
         try {
             let publics = await (await fetchAPI(`public_messages?select=username`)).json();
-            publics.forEach(m => users.add(m.username));
+            publics.forEach(m => { if(m.username) users.add(m.username); });
             let privates = await (await fetchAPI(`private_messages?select=fromUser,toUser`)).json();
-            privates.forEach(m => { users.add(m.fromUser); users.add(m.toUser); });
+            privates.forEach(m => { if(m.fromUser) users.add(m.fromUser); if(m.toUser) users.add(m.toUser); });
         } catch(e) { console.error(e); }
-        return Array.from(users).filter(u => u && u !== currentUser);
+        let result = Array.from(users).filter(u => u && u !== currentUser);
+        if (forceRefresh) {
+            allUsersCache = result;
+            lastUserListUpdate = Date.now();
+        }
+        return result;
     }
 
-    // 删除用户
+    // 删除用户并同步清理所有相关数据
     async function deleteUserData(username) {
-        if (!confirm(`⚠️ 确定要永久删除用户 "${username}" 吗？\n\n这将删除该用户的：\n• 所有公开留言\n• 所有私信（发送和接收）\n\n此操作不可恢复！`)) return false;
+        if (!confirm(`⚠️ 确定要永久删除用户 "${username}" 吗？\n\n这将删除该用户的所有留言和私信！\n此操作不可恢复！`)) return false;
         try {
+            // 删除公开留言
             let publics = await (await fetchAPI(`public_messages?username=eq.${username}`)).json();
             for (let msg of publics) await fetchAPI(`public_messages?id=eq.${msg.id}`, { method: "DELETE" });
+            // 删除私信
             let privates = await (await fetchAPI(`private_messages?or=(fromUser.eq.${username},toUser.eq.${username})`)).json();
             for (let msg of privates) await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "DELETE" });
-            alert(`✅ 用户 "${username}" 及其所有数据已删除`);
+            
+            alert(`✅ 用户 "${username}" 已删除`);
             return true;
         } catch(e) { alert("删除失败：" + e.message); return false; }
+    }
+
+    // 全局刷新所有数据（删除用户后调用）
+    async function globalRefresh() {
+        // 刷新用户缓存
+        await getAllUsers(true);
+        // 刷新公开留言
+        await loadPublic();
+        // 刷新联系人列表
+        await loadContacts();
+        // 如果当前正在和被删除的用户聊天，清除聊天界面
+        if (currentContact) {
+            let users = await getAllUsers(false);
+            if (!users.includes(currentContact) && currentContact !== currentUser) {
+                currentContact = null;
+                document.getElementById("chatHeader").style.display = "none";
+                document.getElementById("chatInputArea").style.display = "none";
+                document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 该用户已被删除，请选择其他联系人</div>';
+            } else {
+                await selectContact(currentContact, false);
+            }
+        }
     }
 
     async function getContacts() {
@@ -569,7 +534,10 @@
                 if (m.toUser === currentUser) users.add(m.fromUser);
             });
         } catch(e) { console.error(e); }
-        return Array.from(users).filter(u => u);
+        // 过滤掉不存在的用户（已删除的）
+        let allValidUsers = await getAllUsers(false);
+        let result = Array.from(users).filter(u => allValidUsers.includes(u) || u === currentUser);
+        return result;
     }
 
     async function getMessagesWith(user) {
@@ -608,7 +576,7 @@
         let contacts = await getContacts();
         let container = document.getElementById("contactList");
         if (contacts.length === 0) {
-            container.innerHTML = '<div class="empty-contact">💬 暂无联系人<br>点击"+ 新聊天"开始对话</div>';
+            container.innerHTML = '<div class="empty-contact">💬 暂无联系人<br>点击"+ 新聊天"搜索用户开始对话</div>';
             return;
         }
         container.innerHTML = "";
@@ -627,13 +595,33 @@
             `;
         }
         if (currentContact) {
-            let highlight = document.querySelector(`.contact-item[onclick="selectContact('${currentContact}')"]`);
-            if (highlight) highlight.classList.add("active");
+            // 检查当前联系人是否还存在
+            if (!contacts.includes(currentContact) && currentContact !== currentUser) {
+                currentContact = null;
+                document.getElementById("chatHeader").style.display = "none";
+                document.getElementById("chatInputArea").style.display = "none";
+                document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 该用户已被删除，请选择其他联系人</div>';
+            } else {
+                let highlight = document.querySelector(`.contact-item[onclick="selectContact('${currentContact}')"]`);
+                if (highlight) highlight.classList.add("active");
+            }
         }
     }
 
-    async function selectContact(contact) {
+    async function selectContact(contact, autoFocus = true) {
         if (!currentUser) return;
+        // 验证用户是否还存在
+        let users = await getAllUsers(false);
+        if (!users.includes(contact) && contact !== currentUser) {
+            alert("该用户已被删除");
+            currentContact = null;
+            document.getElementById("chatHeader").style.display = "none";
+            document.getElementById("chatInputArea").style.display = "none";
+            document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户不存在，请选择其他联系人</div>';
+            await loadContacts();
+            return;
+        }
+        
         currentContact = contact;
         let msgs = await getMessagesWith(contact);
         let container = document.getElementById("chatMessages");
@@ -649,7 +637,7 @@
                         <div class="bubble-content">${escapeHtml(m.content)}</div>
                         <div class="bubble-info">
                             <span>${formatTime(m.timestamp)}</span>
-                            ${canDelete ? `<button class="delete-sticky" onclick="deletePrivateMsg(${m.id})" style="background:none; border:none; color:#94a3b8; cursor:pointer;">删除</button>` : ''}
+                            ${canDelete ? `<button style="background:none; border:none; color:#94a3b8; cursor:pointer;" onclick="deletePrivateMsg(${m.id})">删除</button>` : ''}
                         </div>
                     </div>
                 `;
@@ -660,6 +648,10 @@
         document.getElementById("chatInputArea").style.display = "flex";
         document.getElementById("chatAvatar").innerText = contact.charAt(0).toUpperCase();
         document.getElementById("chatWithName").innerText = contact;
+        
+        if (autoFocus) {
+            document.getElementById("chatMessageInput").focus();
+        }
         
         if (isAdmin && contact !== currentUser) {
             document.getElementById("deleteUserBtn").style.display = "inline-block";
@@ -673,48 +665,48 @@
     }
 
     async function sendPrivateMessage(toUser, content) {
+        if (!content.trim()) return false;
+        // 验证用户是否存在
+        let users = await getAllUsers(false);
+        if (!users.includes(toUser)) {
+            alert("对方用户不存在，无法发送");
+            return false;
+        }
         let res = await fetchAPI(`private_messages`, {
             method: "POST",
-            body: JSON.stringify({ fromUser: currentUser, toUser: toUser, content: content, timestamp: Date.now() })
+            body: JSON.stringify({ fromUser: currentUser, toUser: toUser, content: content.trim(), timestamp: Date.now() })
         });
         return res.ok;
     }
 
-    async function sendToCurrent() {
+    async function openChatWithUser(toUser) {
         if (!currentUser) { alert("请先设置昵称"); return; }
-        if (!currentContact) { alert("请先从左侧选择一个联系人"); return; }
-        let content = document.getElementById("chatMessageInput").value.trim();
-        if (!content) { alert("输入消息内容"); return; }
-        let btn = document.getElementById("sendChatBtn");
-        btn.innerText = "发送中...";
-        btn.disabled = true;
-        let success = await sendPrivateMessage(currentContact, content);
-        if (success) {
-            document.getElementById("chatMessageInput").value = "";
-            await loadContacts();
-            await selectContact(currentContact);
-        } else alert("发送失败");
-        btn.innerText = "发送";
-        btn.disabled = false;
-    }
-
-    // 搜索用户并开始新聊天
-    function openNewChatModal() {
-        document.getElementById("newChatModal").style.display = "flex";
-        document.getElementById("searchUserInput").value = "";
-        document.getElementById("userSearchResults").innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>';
-        document.getElementById("searchUserInput").focus();
-    }
-    
-    async function searchUsers() {
-        let keyword = document.getElementById("searchUserInput").value.trim().toLowerCase();
-        let resultsDiv = document.getElementById("userSearchResults");
+        if (toUser === currentUser) { alert("不能和自己聊天"); return; }
         
-        if (allUsersCache.length === 0) {
-            allUsersCache = await getAllUsers();
+        // 验证用户是否存在
+        let users = await getAllUsers(true);
+        if (!users.includes(toUser)) {
+            alert(`用户 "${toUser}" 不存在`);
+            document.getElementById("searchUserModal").style.display = "none";
+            return;
         }
         
-        let filtered = allUsersCache.filter(u => u.toLowerCase().includes(keyword));
+        document.getElementById("searchUserModal").style.display = "none";
+        await loadContacts();
+        await selectContact(toUser, true);
+    }
+
+    async function searchUsers() {
+        let keyword = document.getElementById("searchUserInput").value.trim().toLowerCase();
+        let resultsDiv = document.getElementById("searchResults");
+        
+        if (keyword === "") {
+            resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>';
+            return;
+        }
+        
+        let users = await getAllUsers(true);
+        let filtered = users.filter(u => u.toLowerCase().includes(keyword) && u !== currentUser);
         
         if (filtered.length === 0) {
             resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">😢 没有找到匹配的用户</div>';
@@ -723,30 +715,39 @@
         
         resultsDiv.innerHTML = filtered.map(user => `
             <div class="user-item">
-                <div class="user-name">
-                    <div class="user-avatar">${escapeHtml(user.charAt(0).toUpperCase())}</div>
+                <div>
+                    <span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span>
                     <span>${escapeHtml(user)}</span>
                 </div>
-                <button class="user-select-btn" onclick="startChatWith('${escapeHtml(user)}')">💬 发消息</button>
+                <button class="user-select-btn" onclick="openChatWithUser('${escapeHtml(user)}')">💬 发消息</button>
             </div>
         `).join('');
     }
-    
-    async function startChatWith(user) {
-        document.getElementById("newChatModal").style.display = "none";
-        // 自动发送一条打招呼消息
-        let msg = prompt(`给 ${user} 发送第一条消息：`, "你好！很高兴认识你~");
-        if (msg && msg.trim()) {
-            let success = await sendPrivateMessage(user, msg.trim());
-            if (success) {
-                await loadContacts();
-                await selectContact(user);
-                alert(`✅ 已发送消息给 ${user}`);
-            } else {
-                alert("发送失败");
-            }
-        } else if (msg === "") {
-            alert("消息不能为空");
+
+    async function openSearchModal() {
+        if (!currentUser) { alert("请先设置昵称"); return; }
+        document.getElementById("searchUserInput").value = "";
+        document.getElementById("searchResults").innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>';
+        await getAllUsers(true);
+        document.getElementById("searchUserModal").style.display = "flex";
+        setTimeout(() => document.getElementById("searchUserInput").focus(), 100);
+    }
+
+    async function sendToCurrent() {
+        if (!currentUser) { alert("请先设置昵称"); return; }
+        if (!currentContact) { alert("请先从左侧选择一个联系人"); return; }
+        let content = document.getElementById("chatMessageInput").value.trim();
+        if (!content) { alert("输入消息内容"); return; }
+        let originalContent = content;
+        document.getElementById("chatMessageInput").value = "";
+        let success = await sendPrivateMessage(currentContact, originalContent);
+        if (success) {
+            await loadContacts();
+            await selectContact(currentContact, false);
+            document.getElementById("chatMessageInput").focus();
+        } else {
+            alert("发送失败");
+            document.getElementById("chatMessageInput").value = originalContent;
         }
     }
 
@@ -779,7 +780,7 @@
     async function deletePrivateMsg(id) {
         if (!confirm("删除这条消息？")) return;
         await fetchAPI(`private_messages?id=eq.${id}`, { method: "DELETE" });
-        if (currentContact) await selectContact(currentContact);
+        if (currentContact) await selectContact(currentContact, false);
         await loadContacts();
     }
 
@@ -793,11 +794,12 @@
         if (usedNames.has(newName)) { alert("昵称已被使用"); return; }
         currentUser = newName;
         localStorage.setItem("wall_user_final", currentUser);
-        document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)}`;
+        document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
         document.getElementById("nicknameInput").disabled = true;
         document.getElementById("setNameBtn").disabled = true;
+        document.getElementById("nicknameInput").value = currentUser;
         await loadContacts();
-        allUsersCache = [];
+        await getAllUsers(true);
     }
 
     async function adminChangeName() {
@@ -817,38 +819,33 @@
         if (currentUser === oldName) {
             currentUser = newName;
             localStorage.setItem("wall_user_final", newName);
-            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)}`;
+            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
         }
-        await loadPublic();
-        await loadContacts();
-        if (currentContact === oldName) await selectContact(newName);
-        allUsersCache = [];
+        await globalRefresh();
         alert("✅ 昵称修改成功");
     }
 
-    // 管理员用户列表弹窗
     async function openUserListModal() {
         if (!isAdmin) return;
-        let users = await getAllUsers();
+        let users = await getAllUsers(true);
         document.getElementById("allUsersList").innerHTML = users.map(user => `
             <div class="user-item">
-                <div class="user-name">
-                    <div class="user-avatar">${escapeHtml(user.charAt(0).toUpperCase())}</div>
+                <div>
+                    <span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span>
                     <span>${escapeHtml(user)}</span>
                 </div>
                 <button class="user-delete-btn" onclick="adminDeleteUserFromList('${escapeHtml(user)}')">🗑️ 删除</button>
             </div>
         `).join('');
         document.getElementById("userListModal").style.display = "flex";
-        // 搜索功能
         document.getElementById("searchUserListInput").value = "";
         document.getElementById("searchUserListInput").oninput = function() {
             let keyword = this.value.trim().toLowerCase();
             let filtered = users.filter(u => u.toLowerCase().includes(keyword));
             document.getElementById("allUsersList").innerHTML = filtered.map(user => `
                 <div class="user-item">
-                    <div class="user-name">
-                        <div class="user-avatar">${escapeHtml(user.charAt(0).toUpperCase())}</div>
+                    <div>
+                        <span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span>
                         <span>${escapeHtml(user)}</span>
                     </div>
                     <button class="user-delete-btn" onclick="adminDeleteUserFromList('${escapeHtml(user)}')">🗑️ 删除</button>
@@ -862,43 +859,46 @@
         let success = await deleteUserData(username);
         if (success) {
             document.getElementById("userListModal").style.display = "none";
-            await loadPublic();
-            await loadContacts();
-            if (currentContact === username) {
-                currentContact = null;
-                document.getElementById("chatHeader").style.display = "none";
-                document.getElementById("chatInputArea").style.display = "none";
-                document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 该用户已被删除</div>';
-            }
-            allUsersCache = [];
+            await globalRefresh();
         }
     }
 
+    function openAdminLogin() {
+        document.getElementById("adminLoginModal").style.display = "flex";
+        document.getElementById("adminPasswordInput").value = "";
+    }
+    
     function verifyAdmin() {
-        let pwd = document.getElementById("adminPassword").value;
+        let pwd = document.getElementById("adminPasswordInput").value;
         if (pwd === ADMIN_PASSWORD) {
             isAdmin = true;
             document.getElementById("adminBadge").style.display = "inline-block";
-            document.getElementById("exitAdminBtn").style.display = "inline-block";
-            document.getElementById("resetNameBtn").style.display = "inline-block";
-            document.getElementById("showUsersBtn").style.display = "inline-block";
-            alert("✅ 管理员模式已启用\n\n新增功能：\n• 可删除任意用户\n• 用户列表支持搜索");
-            loadPublic();
-            if (currentContact) selectContact(currentContact);
-        } else alert("❌ 密码错误");
+            document.getElementById("adminActions").style.display = "flex";
+            document.getElementById("adminLoginModal").style.display = "none";
+            alert("✅ 管理员模式已启用");
+            globalRefresh();
+            document.getElementById("userDropdown").classList.remove("show");
+        } else {
+            alert("❌ 密码错误");
+        }
     }
 
     function exitAdmin() {
         isAdmin = false;
         document.getElementById("adminBadge").style.display = "none";
-        document.getElementById("exitAdminBtn").style.display = "none";
-        document.getElementById("resetNameBtn").style.display = "none";
-        document.getElementById("showUsersBtn").style.display = "none";
+        document.getElementById("adminActions").style.display = "none";
         document.getElementById("deleteUserBtn").style.display = "none";
         alert("已退出管理员模式");
-        loadPublic();
-        if (currentContact) selectContact(currentContact);
+        globalRefresh();
     }
+
+    document.getElementById("userMenu").addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.getElementById("userDropdown").classList.toggle("show");
+    });
+    document.addEventListener("click", () => {
+        document.getElementById("userDropdown").classList.remove("show");
+    });
 
     document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -914,54 +914,59 @@
         window.deletePublic = deletePublic;
         window.deletePrivateMsg = deletePrivateMsg;
         window.selectContact = selectContact;
-        window.startChatWith = startChatWith;
         window.adminDeleteUserFromList = adminDeleteUserFromList;
+        window.sendToCurrent = sendToCurrent;
+        window.openChatWithUser = openChatWithUser;
         
         let saved = localStorage.getItem("wall_user_final");
         if (saved) {
             currentUser = saved;
-            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)}`;
+            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
             document.getElementById("nicknameInput").disabled = true;
             document.getElementById("setNameBtn").disabled = true;
             document.getElementById("nicknameInput").value = currentUser;
         }
         document.getElementById("setNameBtn").onclick = setUserName;
-        document.getElementById("verifyAdminBtn").onclick = verifyAdmin;
+        document.getElementById("adminLoginBtn").onclick = openAdminLogin;
+        document.getElementById("confirmAdminLogin").onclick = verifyAdmin;
+        document.getElementById("cancelAdminLogin").onclick = () => document.getElementById("adminLoginModal").style.display = "none";
         document.getElementById("exitAdminBtn").onclick = exitAdmin;
         document.getElementById("resetNameBtn").onclick = adminChangeName;
         document.getElementById("showUsersBtn").onclick = openUserListModal;
         document.getElementById("postPublicBtn").onclick = postPublic;
         document.getElementById("sendChatBtn").onclick = sendToCurrent;
-        document.getElementById("newChatBtn").onclick = openNewChatModal;
-        document.getElementById("cancelNewChat").onclick = () => document.getElementById("newChatModal").style.display = "none";
+        document.getElementById("newChatBtn").onclick = openSearchModal;
+        document.getElementById("closeSearchModal").onclick = () => document.getElementById("searchUserModal").style.display = "none";
         document.getElementById("closeUserListBtn").onclick = () => document.getElementById("userListModal").style.display = "none";
         document.getElementById("deleteUserBtn").onclick = () => {
             if (currentContact && confirm(`⚠️ 确定要永久删除用户 "${currentContact}" 吗？`)) {
-                deleteUserData(currentContact).then(success => {
-                    if (success) {
-                        loadContacts();
-                        currentContact = null;
-                        document.getElementById("chatHeader").style.display = "none";
-                        document.getElementById("chatInputArea").style.display = "none";
-                        document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户已删除</div>';
-                        allUsersCache = [];
-                    }
-                });
+                deleteUserData(currentContact).then(() => globalRefresh());
             }
         };
         
-        // 搜索输入事件
         document.getElementById("searchUserInput").addEventListener("input", searchUsers);
+        document.getElementById("chatMessageInput").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendToCurrent(); });
         
         await loadPublic();
         if (currentUser) await loadContacts();
+        // 每15秒刷新一次数据，确保删除用户的同步
         setInterval(async () => {
             await loadPublic();
             if (currentUser) {
                 await loadContacts();
-                if (currentContact) await selectContact(currentContact);
+                if (currentContact) {
+                    let users = await getAllUsers(false);
+                    if (!users.includes(currentContact) && currentContact !== currentUser) {
+                        currentContact = null;
+                        document.getElementById("chatHeader").style.display = "none";
+                        document.getElementById("chatInputArea").style.display = "none";
+                        document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户已被删除</div>';
+                    } else {
+                        await selectContact(currentContact, false);
+                    }
+                }
             }
-        }, 5000);
+        }, 15000);
     }
     init();
 </script>
