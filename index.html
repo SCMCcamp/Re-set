@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RE:Set 留言墙 | 便利贴+评论+私信</title>
     <style>
+        /* 样式保持原汁原味（与最后稳定版相同） */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #f0ebe1;
@@ -15,7 +16,6 @@
             min-height: 100vh;
         }
         .app { max-width: 1400px; margin: 0 auto; }
-        
         .logo-card {
             background: white;
             border-radius: 28px;
@@ -32,20 +32,8 @@
         .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
         .logo-text h1 { color: #547443; font-size: 1.4rem; }
         .logo-text p { color: #8b7a66; font-size: 0.7rem; }
-        
         .user-menu { position: relative; cursor: pointer; }
-        .user-badge {
-            background: #e8f0e5;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            color: #547443;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
+        .user-badge { background: #e8f0e5; padding: 8px 16px; border-radius: 40px; font-size: 0.85rem; color: #547443; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         .user-badge:hover { background: #d4e0cd; }
         .user-dropdown {
             position: absolute;
@@ -61,15 +49,13 @@
         }
         .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; border-bottom: 1px solid #edf2f7; }
+        .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid #edf2f7; }
         .dropdown-item:hover { background: #f8fafc; }
-        
         .tab-nav { display: flex; gap: 12px; margin-bottom: 24px; background: transparent; border-radius: 60px; padding: 0; }
-        .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
         .tab-btn.active { background: #547443; color: white; box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
         .nickname-card {
             background: white;
             border-radius: 24px;
@@ -83,13 +69,8 @@
         .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
         .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .nickname-group button:hover { background: #3d5c30; }
-        .nickname-group button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
         .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
-        .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .admin-actions button:hover { background: #b85e00; }
-        .admin-actions .exit-admin { background: #64748b; }
-        
+        .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; }
         .whiteboard {
             background: #fdf8ed;
             border-radius: 32px;
@@ -116,7 +97,6 @@
             transition: 0.2s;
         }
         .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        
         .sticky-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -158,8 +138,6 @@
             gap: 4px;
         }
         .reply-toggle:hover { background: #e8f0e5; }
-        
-        /* 评论区域 */
         .replies-section {
             margin-top: 12px;
             padding-top: 8px;
@@ -196,15 +174,12 @@
             font-size: 0.7rem;
             cursor: pointer;
         }
-        
-        /* 私信布局 (保持原样) */
         .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
         .contact-list { width: 280px; background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .contact-header { background: #547443; color: white; padding: 18px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-        .new-chat-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 16px; border-radius: 40px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
-        .new-chat-btn:hover { background: rgba(255,255,255,0.4); }
+        .new-chat-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 16px; border-radius: 40px; cursor: pointer; font-size: 0.8rem; }
         .contact-items { flex: 1; overflow-y: auto; max-height: 520px; }
-        .contact-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #edf2f7; cursor: pointer; transition: 0.15s; }
+        .contact-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #edf2f7; cursor: pointer; }
         .contact-item:hover { background: #f8fafc; }
         .contact-item.active { background: #e8f0e5; border-left: 4px solid #547443; }
         .contact-avatar { width: 44px; height: 44px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 1.1rem; }
@@ -213,13 +188,11 @@
         .contact-preview { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
         .contact-badge { background: #54744320; padding: 2px 8px; border-radius: 30px; font-size: 0.6rem; color: #547443; }
         .empty-contact { text-align: center; color: #94a3b8; padding: 40px; font-style: italic; }
-        
         .chat-area { flex: 1; background: white; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .chat-header { background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #edf2f7; display: flex; align-items: center; gap: 12px; justify-content: space-between; }
         .chat-header .avatar { width: 40px; height: 40px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; }
         .chat-header h3 { color: #1e293b; flex: 1; }
         .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; cursor: pointer; }
-        .delete-user-btn:hover { background: #dc2626; }
         .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9fafc; min-height: 400px; max-height: 450px; }
         .chat-bubble { display: flex; flex-direction: column; max-width: 80%; }
         .bubble-sent { align-self: flex-end; }
@@ -230,10 +203,8 @@
         .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; justify-content: flex-end; }
         .chat-input-area { padding: 16px; background: white; border-top: 1px solid #edf2f7; display: flex; gap: 10px; }
         .chat-input-area input { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; }
-        .chat-input-area input:focus { outline: none; border-color: #547443; }
         .chat-input-area button { background: #547443; border: none; color: white; padding: 0 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
         .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
-        
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -263,14 +234,11 @@
         .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
         .user-list-modal { max-height: 350px; overflow-y: auto; }
         .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid #edf2f7; }
-        .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
-        .user-select-btn:hover { background: #3d5c30; }
+        .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; }
         .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
         .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
         .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        
         footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
-        
         @media (max-width: 700px) {
             .private-layout { flex-direction: column; }
             .contact-list { width: 100%; max-height: 300px; }
@@ -344,26 +312,28 @@
 </div>
 
 <script>
+    // ==================== Supabase 配置 ====================
     const SUPABASE_URL = "https://chfanuzhklzzawbcazjp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf";
     const ADMIN_PASSWORD = "reset2024";
 
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 仅创建一次 supabase 客户端
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
     let currentUser = "";
     let isAdmin = false;
     let currentContact = null;
-    let allUsersCache = [];
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
 
-    // 获取所有用户（从 public_messages 和 private_messages 中提取）
+    // 获取所有用户
     async function getAllUsers() {
         let users = new Set();
         try {
-            const { data: publics } = await supabase.from('public_messages').select('username');
+            const { data: publics } = await supabaseClient.from('public_messages').select('username');
             publics?.forEach(m => m.username && users.add(m.username));
-            const { data: privates } = await supabase.from('private_messages').select('fromUser,toUser');
+            const { data: privates } = await supabaseClient.from('private_messages').select('fromUser,toUser');
             privates?.forEach(m => { if(m.fromUser) users.add(m.fromUser); if(m.toUser) users.add(m.toUser); });
         } catch(e) { console.error(e); }
         return Array.from(users).filter(u => u && u !== currentUser);
@@ -372,13 +342,12 @@
     // 加载公开留言及评论
     async function loadPublic() {
         try {
-            const { data: messages, error } = await supabase.from('public_messages').select('*').order('timestamp', { ascending: false });
+            const { data: messages, error } = await supabaseClient.from('public_messages').select('*').order('timestamp', { ascending: false });
             if (error) throw error;
             const container = document.getElementById('publicList');
             if (!messages.length) { container.innerHTML = '<div class="empty-sticky">📌 还没有便利贴</div>'; return; }
             
-            // 获取所有评论
-            const { data: allReplies } = await supabase.from('public_message_replies').select('*');
+            const { data: allReplies } = await supabaseClient.from('public_message_replies').select('*');
             const repliesByMsgId = {};
             allReplies?.forEach(r => { if (!repliesByMsgId[r.message_id]) repliesByMsgId[r.message_id] = []; repliesByMsgId[r.message_id].push(r); });
             
@@ -415,19 +384,17 @@
         } catch(e) { console.error(e); document.getElementById('publicList').innerHTML = '<div class="empty-sticky">⚠️ 加载失败</div>'; }
     }
 
-    // 切换评论输入框显示
     window.toggleReplyInput = (msgId) => {
         const el = document.getElementById(`reply-input-${msgId}`);
         if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
     };
 
-    // 提交评论
     window.submitReply = async (msgId) => {
         if (!currentUser) { alert('请先设置昵称'); return; }
         const input = document.getElementById(`reply-content-${msgId}`);
         const content = input.value.trim();
         if (!content) { alert('请输入评论内容'); return; }
-        const { error } = await supabase.from('public_message_replies').insert({
+        const { error } = await supabaseClient.from('public_message_replies').insert({
             message_id: msgId,
             username: currentUser,
             content: content,
@@ -438,18 +405,16 @@
         await loadPublic();
     };
 
-    // 删除评论
     window.deleteReply = async (replyId, msgId) => {
         if (!confirm('删除这条评论？')) return;
-        const { error } = await supabase.from('public_message_replies').delete().eq('id', replyId);
+        const { error } = await supabaseClient.from('public_message_replies').delete().eq('id', replyId);
         if (!error) await loadPublic();
         else alert('删除失败');
     };
 
-    // 加载联系人列表（私信）
     async function loadContacts() {
         if (!currentUser) { document.getElementById('contactList').innerHTML = '<div class="empty-contact">请先设置昵称</div>'; return; }
-        const { data, error } = await supabase.from('private_messages').select('fromUser,toUser').or(`fromUser.eq.${currentUser},toUser.eq.${currentUser}`);
+        const { data, error } = await supabaseClient.from('private_messages').select('fromUser,toUser').or(`fromUser.eq.${currentUser},toUser.eq.${currentUser}`);
         if (error) return;
         const contactSet = new Set();
         data.forEach(m => {
@@ -461,7 +426,7 @@
         if (!contacts.length) { container.innerHTML = '<div class="empty-contact">💬 暂无联系人<br>点击"+ 新聊天"开始对话</div>'; return; }
         container.innerHTML = '';
         for (let contact of contacts) {
-            const { data: msgs } = await supabase
+            const { data: msgs } = await supabaseClient
                 .from('private_messages')
                 .select('content')
                 .or(`and(fromUser.eq.${currentUser},toUser.eq.${contact}),and(fromUser.eq.${contact},toUser.eq.${currentUser})`)
@@ -477,7 +442,7 @@
     }
 
     async function getMessagesWith(user) {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('private_messages')
             .select('*')
             .or(`and(fromUser.eq.${currentUser},toUser.eq.${user}),and(fromUser.eq.${user},toUser.eq.${currentUser})`)
@@ -513,7 +478,7 @@
 
     async function sendPrivateMessage(toUser, content) {
         if (!content.trim()) return false;
-        const { error } = await supabase.from('private_messages').insert({ fromUser: currentUser, toUser, content: content.trim(), timestamp: Date.now() });
+        const { error } = await supabaseClient.from('private_messages').insert({ fromUser: currentUser, toUser, content: content.trim(), timestamp: Date.now() });
         return !error;
     }
 
@@ -530,7 +495,7 @@
 
     window.deletePrivateMsg = async (id) => {
         if (!confirm('删除这条消息？')) return;
-        await supabase.from('private_messages').delete().eq('id', id);
+        await supabaseClient.from('private_messages').delete().eq('id', id);
         if (currentContact) await window.selectContact(currentContact);
         await loadContacts();
     };
@@ -539,14 +504,14 @@
         if (!currentUser) { alert('请先设置昵称'); return; }
         const content = document.getElementById('publicContent').value.trim();
         if (!content) return;
-        const { error } = await supabase.from('public_messages').insert({ username: currentUser, content, timestamp: Date.now() });
+        const { error } = await supabaseClient.from('public_messages').insert({ username: currentUser, content, timestamp: Date.now() });
         if (!error) { document.getElementById('publicContent').value = ''; await loadPublic(); alert('✅ 便利贴贴上啦！'); }
         else alert('发布失败');
     }
 
     window.deletePublic = async (id) => {
         if (!confirm('撕掉这张便利贴？')) return;
-        await supabase.from('public_messages').delete().eq('id', id);
+        await supabaseClient.from('public_messages').delete().eq('id', id);
         await loadPublic();
     };
 
@@ -566,14 +531,13 @@
         alert(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
     }
 
-    // 管理员功能（仅调用 RPC，需要预先创建函数）
     async function adminChangeName() {
         if (!isAdmin) return;
         const oldName = prompt('输入要修改的用户昵称：');
         if (!oldName) return;
         const newName = prompt('输入新昵称：');
         if (!newName) return;
-        const { error } = await supabase.rpc('admin_rename_user', { old_name: oldName, new_name: newName });
+        const { error } = await supabaseClient.rpc('admin_rename_user', { old_name: oldName, new_name: newName });
         if (error) alert('改名失败：' + error.message);
         else {
             alert(`✅ 用户 "${oldName}" 已改名为 "${newName}"`);
@@ -592,7 +556,7 @@
     async function adminDeleteUserFromList(username) {
         if (!isAdmin || username === currentUser) { alert('不能删除自己'); return; }
         if (!confirm(`⚠️ 确定删除用户 "${username}" 及其所有数据？`)) return;
-        const { error } = await supabase.rpc('admin_delete_user', { target_name: username });
+        const { error } = await supabaseClient.rpc('admin_delete_user', { target_name: username });
         if (error) alert('删除失败：' + error.message);
         else {
             alert(`✅ 用户 "${username}" 已删除`);
@@ -643,7 +607,7 @@
         await window.selectContact(user);
     };
 
-    function openAdminLogin() { document.getElementById('adminLoginModal').style.display = 'flex'; }
+    function openAdminLogin() { document.getElementById('adminLoginModal').style.display = 'flex'; document.getElementById('adminPasswordInput').value = ''; }
     function verifyAdmin() {
         if (document.getElementById('adminPasswordInput').value === ADMIN_PASSWORD) {
             isAdmin = true;
@@ -665,7 +629,7 @@
         if (currentContact) window.selectContact(currentContact);
     }
 
-    // 初始化
+    // 绑定 UI 事件
     document.getElementById('setNameBtn').onclick = setUserName;
     document.getElementById('postPublicBtn').onclick = postPublic;
     document.getElementById('sendChatBtn').onclick = window.sendToCurrent;
@@ -680,7 +644,7 @@
     document.getElementById('showUsersBtn').onclick = openUserListModal;
     document.getElementById('deleteUserBtn').onclick = async () => {
         if (currentContact && confirm(`⚠️ 删除用户 ${currentContact}？`)) {
-            await supabase.rpc('admin_delete_user', { target_name: currentContact });
+            await supabaseClient.rpc('admin_delete_user', { target_name: currentContact });
             alert('用户已删除');
             currentContact = null;
             await loadPublic();
@@ -703,6 +667,7 @@
         });
     });
 
+    // 初始化
     (async () => {
         const saved = localStorage.getItem('wall_user_saved');
         if (saved) {
@@ -715,12 +680,12 @@
         await loadPublic();
         if (currentUser) await loadContacts();
 
-        // 实时订阅公开留言和评论
-        supabase.channel('public-changes')
+        // 实时订阅
+        supabaseClient.channel('public-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'public_messages' }, () => loadPublic())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'public_message_replies' }, () => loadPublic())
             .subscribe();
-        supabase.channel('private-changes')
+        supabaseClient.channel('private-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'private_messages' }, async () => {
                 if (currentUser) { await loadContacts(); if (currentContact) await window.selectContact(currentContact); }
             })
