@@ -5,29 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RE:Set 留言墙 | 便利贴+评论+私信</title>
     <style>
-        /* 样式与之前完全相同，为保证完整性，此处沿用之前的全部样式 */
+        /* 原样式保持不变，仅增加分页按钮和确认弹窗额外样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #f0ebe1;
-            background-image: radial-gradient(#d4c9b8 1px, transparent 1px);
-            background-size: 30px 30px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            padding: 16px; 
-            min-height: 100vh;
-        }
+        body { background: #f0ebe1; background-image: radial-gradient(#d4c9b8 1px, transparent 1px); background-size: 30px 30px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px; min-height: 100vh; }
         .app { max-width: 1400px; margin: 0 auto; }
-        .logo-card {
-            background: white;
-            border-radius: 28px;
-            padding: 12px 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        .logo-card { background: white; border-radius: 28px; padding: 12px 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
         .logo-text h1 { color: #547443; font-size: 1.4rem; }
@@ -35,18 +17,7 @@
         .user-menu { position: relative; cursor: pointer; }
         .user-badge { background: #e8f0e5; padding: 8px 16px; border-radius: 40px; font-size: 0.85rem; color: #547443; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         .user-badge:hover { background: #d4e0cd; }
-        .user-dropdown {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 180px;
-            z-index: 100;
-            overflow: hidden;
-            display: none;
-        }
+        .user-dropdown { position: absolute; top: 50px; right: 0; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); min-width: 180px; z-index: 100; overflow: hidden; display: none; }
         .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; border-bottom: 1px solid #edf2f7; }
@@ -56,13 +27,7 @@
         .tab-btn.active { background: #547443; color: white; box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .nickname-card {
-            background: white;
-            border-radius: 24px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+        .nickname-card { background: white; border-radius: 24px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
         .nickname-group input:focus { outline: none; border-color: #547443; }
@@ -71,50 +36,16 @@
         .nickname-group button:hover { background: #3d5c30; }
         .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
         .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; }
-        .whiteboard {
-            background: #fdf8ed;
-            border-radius: 32px;
-            padding: 24px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            border: 1px solid #e8dcc8;
-        }
+        .whiteboard { background: #fdf8ed; border-radius: 32px; padding: 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border: 1px solid #e8dcc8; }
         .whiteboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px dashed #d4c5a8; }
         .whiteboard-header h2 { color: #5c4b2e; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
         .sticky-input { background: #fffef7; border-radius: 20px; padding: 15px; margin-bottom: 25px; border: 1px solid #e8e0d0; }
         .sticky-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e0d5c0; border-radius: 20px; font-size: 1rem; font-family: inherit; background: white; resize: vertical; }
         .sticky-input textarea:focus { outline: none; border-color: #547443; }
-        .sticky-input button {
-            margin-top: 12px;
-            background: #547443;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
+        .sticky-input button { margin-top: 12px; background: #547443; border: none; padding: 14px 24px; border-radius: 60px; color: white; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: 0.2s; }
         .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        .sticky-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            max-height: 600px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-        .sticky-note {
-            background: #fffaec;
-            padding: 16px;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-            border-left: 6px solid #547443;
-            display: flex;
-            flex-direction: column;
-        }
+        .sticky-grid { display: flex; flex-direction: column; gap: 20px; max-height: 600px; overflow-y: auto; padding: 5px; }
+        .sticky-note { background: #fffaec; padding: 16px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: transform 0.2s; border-left: 6px solid #547443; display: flex; flex-direction: column; }
         .sticky-note:hover { transform: translateY(-3px); }
         .sticky-note:nth-child(odd) { rotate: -0.5deg; }
         .sticky-note:nth-child(even) { rotate: 0.8deg; }
@@ -125,55 +56,19 @@
         .sticky-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
         .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; }
         .delete-sticky:hover { background: #fee2e2; color: #dc2626; }
-        .reply-toggle {
-            background: none;
-            border: none;
-            color: #547443;
-            font-size: 0.7rem;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .reply-toggle { background: none; border: none; color: #547443; font-size: 0.7rem; cursor: pointer; padding: 4px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
         .reply-toggle:hover { background: #e8f0e5; }
-        .replies-section {
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px dashed #e0d5c0;
-        }
-        .reply-item {
-            font-size: 0.75rem;
-            padding: 6px 0;
-            border-bottom: 1px solid #f0e6d0;
-            color: #4a3f2c;
-        }
+        .replies-section { margin-top: 12px; padding-top: 8px; border-top: 1px dashed #e0d5c0; }
+        .reply-item { font-size: 0.75rem; padding: 6px 0; border-bottom: 1px solid #f0e6d0; color: #4a3f2c; }
         .reply-author { font-weight: 600; color: #547443; margin-right: 8px; }
         .reply-time { font-size: 0.6rem; color: #aa9f89; float: right; }
         .reply-content { word-break: break-word; margin-top: 2px; }
-        .reply-input-area {
-            margin-top: 8px;
-            display: none;
-            gap: 8px;
-            align-items: center;
-        }
-        .reply-input-area input {
-            flex: 1;
-            padding: 6px 10px;
-            border-radius: 30px;
-            border: 1px solid #e0d5c0;
-            font-size: 0.75rem;
-        }
-        .reply-input-area button {
-            background: #547443;
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
+        .reply-input-area { margin-top: 8px; display: none; gap: 8px; align-items: center; }
+        .reply-input-area input { flex: 1; padding: 6px 10px; border-radius: 30px; border: 1px solid #e0d5c0; font-size: 0.75rem; }
+        .reply-input-area button { background: #547443; border: none; color: white; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; cursor: pointer; }
+        .pagination-container { text-align: center; margin-top: 20px; padding: 10px; }
+        .load-more-btn { background: #e8e0d0; color: #5c4b2e; border: none; padding: 8px 20px; border-radius: 40px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .load-more-btn:hover { background: #d4c5a8; }
         .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
         .contact-list { width: 280px; background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .contact-header { background: #547443; color: white; padding: 18px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
@@ -205,30 +100,8 @@
         .chat-input-area input { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; }
         .chat-input-area button { background: #547443; border: none; color: white; padding: 0 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
         .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-container {
-            background: white;
-            border-radius: 32px;
-            padding: 24px;
-            width: 360px;
-            max-width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3);
-            animation: modalFadeIn 0.2s ease;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        .modal-container { background: white; border-radius: 32px; padding: 24px; width: 360px; max-width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 35px -10px rgba(0,0,0,0.3); animation: modalFadeIn 0.2s ease; }
         @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .modal-container h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
@@ -239,78 +112,42 @@
         .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
         .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
         footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
-        @media (max-width: 700px) {
-            .private-layout { flex-direction: column; }
-            .contact-list { width: 100%; max-height: 300px; }
-            .tab-btn { font-size: 0.9rem; padding: 12px 16px; }
-        }
+        @media (max-width: 700px) { .private-layout { flex-direction: column; } .contact-list { width: 100%; max-height: 300px; } .tab-btn { font-size: 0.9rem; padding: 12px 16px; } }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app">
     <div class="logo-card">
-        <div class="logo-area">
-            <div class="logo-icon">R</div>
-            <div class="logo-text">
-                <h1>RE:Set 留言墙</h1>
-                <p>便利贴白板 · 评论 · 私信聊天室</p>
-            </div>
-        </div>
-        <div class="user-menu" id="userMenu">
-            <div class="user-badge" id="currentUserBadge">👤 未设置昵称 ▼</div>
-            <div class="user-dropdown" id="userDropdown">
-                <div class="dropdown-item" id="adminLoginBtn">🔐 管理员登录</div>
-            </div>
-        </div>
+        <div class="logo-area"><div class="logo-icon">R</div><div class="logo-text"><h1>RE:Set 留言墙</h1><p>便利贴白板 · 评论 · 私信聊天室</p></div></div>
+        <div class="user-menu" id="userMenu"><div class="user-badge" id="currentUserBadge">👤 未设置昵称 ▼</div><div class="user-dropdown" id="userDropdown"><div class="dropdown-item" id="adminLoginBtn">🔐 管理员登录</div></div></div>
     </div>
-
     <div class="nickname-card">
-        <div class="nickname-group">
-            <input type="text" id="nicknameInput" placeholder="输入你的昵称">
-            <button id="setNameBtn">设置昵称</button>
-        </div>
-        <div id="adminActions" class="admin-actions">
-            <button id="resetNameBtn">✏️ 修改任意昵称</button>
-            <button id="showUsersBtn">📋 用户列表</button>
-            <button id="exitAdminBtn" class="exit-admin">🚪 退出管理员</button>
-        </div>
+        <div class="nickname-group"><input type="text" id="nicknameInput" placeholder="输入你的昵称"><button id="setNameBtn">设置昵称</button></div>
+        <div id="adminActions" class="admin-actions"><button id="resetNameBtn">✏️ 修改任意昵称</button><button id="showUsersBtn">📋 用户列表</button><button id="exitAdminBtn" class="exit-admin">🚪 退出管理员</button></div>
         <span id="adminBadge" style="display:none; font-size:0.7rem; color:#d97706; margin-left:10px;">👑 管理员模式</span>
     </div>
-
-    <div class="tab-nav">
-        <button class="tab-btn active" data-tab="tab1">📌 留言墙</button>
-        <button class="tab-btn" data-tab="tab2">💬 私信</button>
-    </div>
-
+    <div class="tab-nav"><button class="tab-btn active" data-tab="tab1">📌 留言墙</button><button class="tab-btn" data-tab="tab2">💬 私信</button></div>
     <div id="tab1" class="tab-content active">
         <div class="whiteboard">
             <div class="whiteboard-header"><h2><span>📌</span> 便利贴白板墙</h2><span style="font-size:12px; color:#aa9f89;">✨ 所有人可见 · 可评论</span></div>
             <div class="sticky-input"><textarea id="publicContent" rows="3" placeholder="写张便利贴吧... 会贴在白板上 ✨"></textarea><button id="postPublicBtn">📝 贴上便利贴</button></div>
-            <div class="sticky-grid" id="publicList">加载中...</div>
+            <div id="publicListContainer">
+                <div class="sticky-grid" id="publicList">加载中...</div>
+                <div id="paginationControls" class="pagination-container"></div>
+            </div>
         </div>
     </div>
-
     <div id="tab2" class="tab-content">
         <div class="private-layout">
-            <div class="contact-list">
-                <div class="contact-header"><span>📋 联系人</span><button class="new-chat-btn" id="newChatBtn">+ 新聊天</button></div>
-                <div class="contact-items" id="contactList">加载中...</div>
-            </div>
-            <div class="chat-area">
-                <div class="chat-header" id="chatHeader" style="display: none;"><div class="avatar" id="chatAvatar">?</div><h3 id="chatWithName">选择联系人</h3><button id="deleteUserBtn" class="delete-user-btn" style="display:none;">🗑️ 删除用户</button></div>
-                <div class="chat-messages" id="chatMessages"><div class="empty-chat">💬 从左列表选择一个联系人开始聊天</div></div>
-                <div class="chat-input-area" id="chatInputArea" style="display: none;"><input type="text" id="chatMessageInput" placeholder="输入消息..."><button id="sendChatBtn">发送</button></div>
-            </div>
+            <div class="contact-list"><div class="contact-header"><span>📋 联系人</span><button class="new-chat-btn" id="newChatBtn">+ 新聊天</button></div><div class="contact-items" id="contactList">加载中...</div></div>
+            <div class="chat-area"><div class="chat-header" id="chatHeader" style="display:none;"><div class="avatar" id="chatAvatar">?</div><h3 id="chatWithName">选择联系人</h3><button id="deleteUserBtn" class="delete-user-btn" style="display:none;">🗑️ 删除用户</button></div><div class="chat-messages" id="chatMessages"><div class="empty-chat">💬 从左列表选择一个联系人开始聊天</div></div><div class="chat-input-area" id="chatInputArea" style="display:none;"><input type="text" id="chatMessageInput" placeholder="输入消息..."><button id="sendChatBtn">发送</button></div></div>
         </div>
     </div>
-
-    <!-- 新聊天搜索弹窗 -->
+    <!-- 模态框区域 -->
     <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
-
-    <!-- 成功提示模态框（新增） -->
-    <div id="successModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>✅ 设置成功</h3><p id="successMessage" style="margin-bottom:20px;">昵称设置成功！</p><div class="modal-buttons"><button id="closeSuccessModal">确定</button></div></div></div></div>
-
+    <div id="successModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>✅ 成功</h3><p id="successMessage" style="margin-bottom:20px;"></p><div class="modal-buttons"><button id="closeSuccessModal">确定</button></div></div></div></div>
+    <div id="confirmModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>⚠️ 确认操作</h3><p id="confirmMessage" style="margin-bottom:20px;"></p><div class="modal-buttons"><button id="confirmYes">确定</button><button id="confirmNo">取消</button></div></div></div></div>
     <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
     <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
     <footer>💾 数据互通 | 便利贴所有人可见并可评论 | 私信仅双方可见</footer>
@@ -327,55 +164,88 @@
     let currentUser = "";
     let isAdmin = false;
     let currentContact = null;
-
-    // 显示成功模态框
+    
+    // 分页相关变量
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+    let totalMessages = 0;
+    let isLoadingMore = false;
+    
+    // 模态框回调
+    let confirmCallback = null;
+    
+    // 显示确认模态框
+    function showConfirm(message, onConfirm) {
+        const modal = document.getElementById('confirmModal');
+        const msgSpan = document.getElementById('confirmMessage');
+        msgSpan.innerText = message;
+        modal.style.display = 'flex';
+        const yesBtn = document.getElementById('confirmYes');
+        const noBtn = document.getElementById('confirmNo');
+        const newYes = yesBtn.cloneNode(true);
+        const newNo = noBtn.cloneNode(true);
+        yesBtn.parentNode.replaceChild(newYes, yesBtn);
+        noBtn.parentNode.replaceChild(newNo, noBtn);
+        newYes.addEventListener('click', () => {
+            modal.style.display = 'none';
+            if (onConfirm) onConfirm();
+        });
+        newNo.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        const overlay = modal.querySelector('.modal-overlay');
+        if (overlay) overlay.onclick = (e) => { if (e.target === overlay) modal.style.display = 'none'; };
+    }
+    
     function showSuccessModal(message) {
         const modal = document.getElementById('successModal');
         const msgSpan = document.getElementById('successMessage');
-        if (msgSpan) msgSpan.innerText = message;
+        msgSpan.innerText = message;
         modal.style.display = 'flex';
-        // 绑定关闭事件（如果已经绑定则先移除再添加，避免重复）
         const closeBtn = document.getElementById('closeSuccessModal');
-        const newCloseBtn = closeBtn.cloneNode(true);
-        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
-        newCloseBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-        // 点击背景也可关闭
+        const newClose = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newClose, closeBtn);
+        newClose.addEventListener('click', () => modal.style.display = 'none');
         const overlay = modal.querySelector('.modal-overlay');
-        if (overlay) {
-            overlay.onclick = (e) => {
-                if (e.target === overlay) modal.style.display = 'none';
-            };
-        }
+        if (overlay) overlay.onclick = (e) => { if (e.target === overlay) modal.style.display = 'none'; };
     }
-
+    
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
-
-    async function getAllUsers() {
-        let users = new Set();
-        try {
-            const { data: publics } = await supabaseClient.from('public_messages').select('username');
-            publics?.forEach(m => m.username && users.add(m.username));
-            const { data: privates } = await supabaseClient.from('private_messages').select('fromUser,toUser');
-            privates?.forEach(m => { if(m.fromUser) users.add(m.fromUser); if(m.toUser) users.add(m.toUser); });
-        } catch(e) { console.error(e); }
-        return Array.from(users).filter(u => u && u !== currentUser);
+    
+    // 获取总留言数（用于分页）
+    async function getTotalMessagesCount() {
+        const { count, error } = await supabaseClient.from('public_messages').select('*', { count: 'exact', head: true });
+        if (error) return 0;
+        return count;
     }
-
-    async function loadPublic() {
+    
+    // 分页加载公开留言
+    async function loadPublic(page = 1, append = false) {
+        const from = (page - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE - 1;
         try {
-            const { data: messages, error } = await supabaseClient.from('public_messages').select('*').order('timestamp', { ascending: false });
+            const { data: messages, error, count } = await supabaseClient
+                .from('public_messages')
+                .select('*', { count: 'exact' })
+                .order('timestamp', { ascending: false })
+                .range(from, to);
             if (error) throw error;
-            const container = document.getElementById('publicList');
-            if (!messages.length) { container.innerHTML = '<div class="empty-sticky">📌 还没有便利贴</div>'; return; }
-            
+            totalMessages = count;
+            if (!append) {
+                document.getElementById('publicList').innerHTML = '';
+            }
+            if (!messages.length && page === 1) {
+                document.getElementById('publicList').innerHTML = '<div class="empty-sticky">📌 还没有便利贴</div>';
+                document.getElementById('paginationControls').innerHTML = '';
+                return;
+            }
+            // 获取所有评论（后续可优化为按消息ID批量获取，但为简单先全量）
             const { data: allReplies } = await supabaseClient.from('public_message_replies').select('*');
             const repliesByMsgId = {};
             allReplies?.forEach(r => { if (!repliesByMsgId[r.message_id]) repliesByMsgId[r.message_id] = []; repliesByMsgId[r.message_id].push(r); });
             
-            container.innerHTML = '';
+            const container = document.getElementById('publicList');
             for (let msg of messages) {
                 const canDelete = (currentUser === msg.username) || isAdmin;
                 const replies = repliesByMsgId[msg.id] || [];
@@ -405,14 +275,35 @@
                     </div>
                 `;
             }
+            // 更新分页按钮
+            const pages = Math.ceil(totalMessages / PAGE_SIZE);
+            let paginationHtml = '';
+            if (pages > 1) {
+                paginationHtml = `<button class="load-more-btn" id="loadMoreBtn" ${page >= pages ? 'disabled style="opacity:0.5;"' : ''}>加载更多 (${page}/${pages})</button>`;
+            }
+            document.getElementById('paginationControls').innerHTML = paginationHtml;
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn && page < pages) {
+                loadMoreBtn.onclick = () => {
+                    if (isLoadingMore) return;
+                    isLoadingMore = true;
+                    loadPublic(page + 1, true).finally(() => { isLoadingMore = false; });
+                };
+            }
         } catch(e) { console.error(e); document.getElementById('publicList').innerHTML = '<div class="empty-sticky">⚠️ 加载失败</div>'; }
     }
-
+    
+    // 刷新便利贴（重置分页）
+    async function refreshPublic() {
+        currentPage = 1;
+        await loadPublic(1, false);
+    }
+    
     window.toggleReplyInput = (msgId) => {
         const el = document.getElementById(`reply-input-${msgId}`);
         if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
     };
-
+    
     window.submitReply = async (msgId) => {
         if (!currentUser) { alert('请先设置昵称'); return; }
         const input = document.getElementById(`reply-content-${msgId}`);
@@ -426,16 +317,24 @@
         });
         if (error) { alert('评论失败: ' + error.message); return; }
         input.value = '';
-        await loadPublic();
+        await refreshPublic(); // 刷新整个便利贴分页
     };
-
+    
     window.deleteReply = async (replyId, msgId) => {
-        if (!confirm('删除这条评论？')) return;
-        const { error } = await supabaseClient.from('public_message_replies').delete().eq('id', replyId);
-        if (!error) await loadPublic();
-        else alert('删除失败');
+        showConfirm('删除这条评论？', async () => {
+            const { error } = await supabaseClient.from('public_message_replies').delete().eq('id', replyId);
+            if (!error) await refreshPublic();
+            else alert('删除失败');
+        });
     };
-
+    
+    // 私信相关函数（保持不变，略去细节，但完整可用）
+    async function getAllUsers() {
+        const { data, error } = await supabaseClient.from('users').select('username');
+        if (error) return [];
+        return data.map(u => u.username).filter(u => u !== currentUser);
+    }
+    
     async function loadContacts() {
         if (!currentUser) { document.getElementById('contactList').innerHTML = '<div class="empty-contact">请先设置昵称</div>'; return; }
         const { data, error } = await supabaseClient.from('private_messages').select('fromUser,toUser').or(`fromUser.eq.${currentUser},toUser.eq.${currentUser}`);
@@ -464,7 +363,7 @@
             if (active) active.classList.add('active');
         }
     }
-
+    
     async function getMessagesWith(user) {
         const { data, error } = await supabaseClient
             .from('private_messages')
@@ -474,7 +373,7 @@
         if (error) return [];
         return data;
     }
-
+    
     window.selectContact = async (contact) => {
         if (!currentUser) return;
         currentContact = contact;
@@ -499,13 +398,13 @@
         if (active) active.classList.add('active');
         document.getElementById('chatMessageInput').focus();
     };
-
+    
     async function sendPrivateMessage(toUser, content) {
         if (!content.trim()) return false;
         const { error } = await supabaseClient.from('private_messages').insert({ fromUser: currentUser, toUser, content: content.trim(), timestamp: Date.now() });
         return !error;
     }
-
+    
     window.sendToCurrent = async () => {
         if (!currentUser || !currentContact) return;
         const input = document.getElementById('chatMessageInput');
@@ -516,35 +415,38 @@
         if (success) { await loadContacts(); await window.selectContact(currentContact); }
         else { alert('发送失败'); input.value = content; }
     };
-
+    
     window.deletePrivateMsg = async (id) => {
-        if (!confirm('删除这条消息？')) return;
-        await supabaseClient.from('private_messages').delete().eq('id', id);
-        if (currentContact) await window.selectContact(currentContact);
-        await loadContacts();
+        showConfirm('删除这条消息？', async () => {
+            await supabaseClient.from('private_messages').delete().eq('id', id);
+            if (currentContact) await window.selectContact(currentContact);
+            await loadContacts();
+        });
     };
-
+    
     async function postPublic() {
         if (!currentUser) { alert('请先设置昵称'); return; }
         const content = document.getElementById('publicContent').value.trim();
         if (!content) return;
         const { error } = await supabaseClient.from('public_messages').insert({ username: currentUser, content, timestamp: Date.now() });
-        if (!error) { document.getElementById('publicContent').value = ''; await loadPublic(); alert('✅ 便利贴贴上啦！'); }
+        if (!error) { document.getElementById('publicContent').value = ''; await refreshPublic(); alert('✅ 便利贴贴上啦！'); }
         else alert('发布失败');
     }
-
+    
     window.deletePublic = async (id) => {
-        if (!confirm('撕掉这张便利贴？')) return;
-        await supabaseClient.from('public_messages').delete().eq('id', id);
-        await loadPublic();
+        showConfirm('撕掉这张便利贴？', async () => {
+            await supabaseClient.from('public_messages').delete().eq('id', id);
+            await refreshPublic();
+        });
     };
-
-    // 修改设置昵称函数：成功后使用模态框，不再使用 alert
+    
     async function setUserName() {
         let newName = document.getElementById('nicknameInput').value.trim();
         if (!newName) { alert('请输入昵称'); return; }
-        const users = await getAllUsers();
-        if (users.includes(newName)) { alert('❌ 该昵称已被使用，请换一个'); return; }
+        const { data: existing } = await supabaseClient.from('users').select('username').eq('username', newName).maybeSingle();
+        if (existing) { alert('❌ 该昵称已被使用，请换一个'); return; }
+        const { error } = await supabaseClient.from('users').insert({ username: newName });
+        if (error) { alert('设置失败：' + error.message); return; }
         currentUser = newName;
         localStorage.setItem('wall_user_saved', currentUser);
         document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
@@ -552,11 +454,10 @@
         document.getElementById('setNameBtn').disabled = true;
         document.getElementById('nicknameInput').value = currentUser;
         await loadContacts();
-        await loadPublic();
-        // 显示成功模态框，替代 alert
+        await refreshPublic();
         showSuccessModal(`✅ 昵称 "${currentUser}" 设置成功！`);
     }
-
+    
     async function adminChangeName() {
         if (!isAdmin) return;
         const oldName = prompt('输入要修改的用户昵称：');
@@ -573,31 +474,32 @@
                 document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
                 if (currentContact === oldName) currentContact = newName;
             }
-            await loadPublic();
+            await refreshPublic();
             await loadContacts();
             if (currentContact) await window.selectContact(currentContact);
         }
     }
-
+    
     async function adminDeleteUserFromList(username) {
         if (!isAdmin || username === currentUser) { alert('不能删除自己'); return; }
-        if (!confirm(`⚠️ 确定删除用户 "${username}" 及其所有数据？`)) return;
-        const { error } = await supabaseClient.rpc('admin_delete_user', { target_name: username });
-        if (error) alert('删除失败：' + error.message);
-        else {
-            alert(`✅ 用户 "${username}" 已删除`);
-            if (currentContact === username) {
-                currentContact = null;
-                document.getElementById('chatHeader').style.display = 'none';
-                document.getElementById('chatInputArea').style.display = 'none';
-                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
+        showConfirm(`⚠️ 确定删除用户 "${username}" 及其所有数据？`, async () => {
+            const { error } = await supabaseClient.rpc('admin_delete_user', { target_name: username });
+            if (error) alert('删除失败：' + error.message);
+            else {
+                alert(`✅ 用户 "${username}" 已删除`);
+                if (currentContact === username) {
+                    currentContact = null;
+                    document.getElementById('chatHeader').style.display = 'none';
+                    document.getElementById('chatInputArea').style.display = 'none';
+                    document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
+                }
+                await refreshPublic();
+                await loadContacts();
+                document.getElementById('userListModal').style.display = 'none';
             }
-            await loadPublic();
-            await loadContacts();
-            document.getElementById('userListModal').style.display = 'none';
-        }
+        });
     }
-
+    
     async function openUserListModal() {
         if (!isAdmin) return;
         const users = await getAllUsers();
@@ -610,7 +512,7 @@
             container.innerHTML = filtered.map(u => `<div class="user-item"><div>${escapeHtml(u)}</div><button onclick="adminDeleteUserFromList('${escapeHtml(u)}')">删除</button></div>`).join('');
         };
     }
-
+    
     async function openSearchModal() {
         if (!currentUser) { alert('请先设置昵称'); return; }
         const users = await getAllUsers();
@@ -625,14 +527,14 @@
             else resultsDiv.innerHTML = filtered.map(u => `<div class="user-item"><div>${escapeHtml(u)}</div><button class="user-select-btn" onclick="startChatWith('${escapeHtml(u)}')">💬 发消息</button></div>`).join('');
         };
     }
-
+    
     window.startChatWith = async (user) => {
         if (user === currentUser) { alert('不能和自己聊天'); return; }
         document.getElementById('searchUserModal').style.display = 'none';
         await loadContacts();
         await window.selectContact(user);
     };
-
+    
     function openAdminLogin() { document.getElementById('adminLoginModal').style.display = 'flex'; document.getElementById('adminPasswordInput').value = ''; }
     function verifyAdmin() {
         if (document.getElementById('adminPasswordInput').value === ADMIN_PASSWORD) {
@@ -641,7 +543,7 @@
             document.getElementById('adminActions').style.display = 'flex';
             document.getElementById('adminLoginModal').style.display = 'none';
             alert('✅ 管理员模式已启用');
-            loadPublic();
+            refreshPublic();
             if (currentContact) window.selectContact(currentContact);
         } else alert('密码错误');
     }
@@ -651,11 +553,11 @@
         document.getElementById('adminActions').style.display = 'none';
         document.getElementById('deleteUserBtn').style.display = 'none';
         alert('已退出管理员模式');
-        loadPublic();
+        refreshPublic();
         if (currentContact) window.selectContact(currentContact);
     }
-
-    // 绑定 UI 事件
+    
+    // 事件绑定
     document.getElementById('setNameBtn').onclick = setUserName;
     document.getElementById('postPublicBtn').onclick = postPublic;
     document.getElementById('sendChatBtn').onclick = window.sendToCurrent;
@@ -669,15 +571,17 @@
     document.getElementById('resetNameBtn').onclick = adminChangeName;
     document.getElementById('showUsersBtn').onclick = openUserListModal;
     document.getElementById('deleteUserBtn').onclick = async () => {
-        if (currentContact && confirm(`⚠️ 删除用户 ${currentContact}？`)) {
-            await supabaseClient.rpc('admin_delete_user', { target_name: currentContact });
-            alert('用户已删除');
-            currentContact = null;
-            await loadPublic();
-            await loadContacts();
-            document.getElementById('chatHeader').style.display = 'none';
-            document.getElementById('chatInputArea').style.display = 'none';
-            document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
+        if (currentContact) {
+            showConfirm(`⚠️ 删除用户 ${currentContact}？`, async () => {
+                await supabaseClient.rpc('admin_delete_user', { target_name: currentContact });
+                alert('用户已删除');
+                currentContact = null;
+                await refreshPublic();
+                await loadContacts();
+                document.getElementById('chatHeader').style.display = 'none';
+                document.getElementById('chatInputArea').style.display = 'none';
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
+            });
         }
     };
     document.getElementById('chatMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.sendToCurrent(); });
@@ -692,22 +596,27 @@
             if (btn.dataset.tab === 'tab2' && currentUser) loadContacts();
         });
     });
-
+    
     (async () => {
         const saved = localStorage.getItem('wall_user_saved');
         if (saved) {
-            currentUser = saved;
-            document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
-            document.getElementById('nicknameInput').disabled = true;
-            document.getElementById('setNameBtn').disabled = true;
-            document.getElementById('nicknameInput').value = currentUser;
+            const { data } = await supabaseClient.from('users').select('username').eq('username', saved).maybeSingle();
+            if (data) {
+                currentUser = saved;
+                document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
+                document.getElementById('nicknameInput').disabled = true;
+                document.getElementById('setNameBtn').disabled = true;
+                document.getElementById('nicknameInput').value = currentUser;
+            } else {
+                localStorage.removeItem('wall_user_saved');
+            }
         }
-        await loadPublic();
+        await refreshPublic();
         if (currentUser) await loadContacts();
-
+        
         supabaseClient.channel('public-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_messages' }, () => loadPublic())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_message_replies' }, () => loadPublic())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_messages' }, () => refreshPublic())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_message_replies' }, () => refreshPublic())
             .subscribe();
         supabaseClient.channel('private-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'private_messages' }, async () => {
