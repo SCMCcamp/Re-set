@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RE:Set 留言墙 | 便利贴+评论+私信</title>
     <style>
-        /* 样式保持原汁原味（与最后稳定版相同） */
+        /* 样式与之前完全相同，为保证完整性，此处沿用之前的全部样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #f0ebe1;
@@ -305,29 +305,54 @@
         </div>
     </div>
 
+    <!-- 新聊天搜索弹窗 -->
     <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
+
+    <!-- 成功提示模态框（新增） -->
+    <div id="successModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>✅ 设置成功</h3><p id="successMessage" style="margin-bottom:20px;">昵称设置成功！</p><div class="modal-buttons"><button id="closeSuccessModal">确定</button></div></div></div></div>
+
     <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
     <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
     <footer>💾 数据互通 | 便利贴所有人可见并可评论 | 私信仅双方可见</footer>
 </div>
 
 <script>
-    // ==================== Supabase 配置 ====================
+    // Supabase 配置
     const SUPABASE_URL = "https://chfanuzhklzzawbcazjp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf";
     const ADMIN_PASSWORD = "reset2024";
 
-    // 仅创建一次 supabase 客户端
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     let currentUser = "";
     let isAdmin = false;
     let currentContact = null;
 
+    // 显示成功模态框
+    function showSuccessModal(message) {
+        const modal = document.getElementById('successModal');
+        const msgSpan = document.getElementById('successMessage');
+        if (msgSpan) msgSpan.innerText = message;
+        modal.style.display = 'flex';
+        // 绑定关闭事件（如果已经绑定则先移除再添加，避免重复）
+        const closeBtn = document.getElementById('closeSuccessModal');
+        const newCloseBtn = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+        newCloseBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        // 点击背景也可关闭
+        const overlay = modal.querySelector('.modal-overlay');
+        if (overlay) {
+            overlay.onclick = (e) => {
+                if (e.target === overlay) modal.style.display = 'none';
+            };
+        }
+    }
+
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
     function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
 
-    // 获取所有用户
     async function getAllUsers() {
         let users = new Set();
         try {
@@ -339,7 +364,6 @@
         return Array.from(users).filter(u => u && u !== currentUser);
     }
 
-    // 加载公开留言及评论
     async function loadPublic() {
         try {
             const { data: messages, error } = await supabaseClient.from('public_messages').select('*').order('timestamp', { ascending: false });
@@ -515,6 +539,7 @@
         await loadPublic();
     };
 
+    // 修改设置昵称函数：成功后使用模态框，不再使用 alert
     async function setUserName() {
         let newName = document.getElementById('nicknameInput').value.trim();
         if (!newName) { alert('请输入昵称'); return; }
@@ -528,7 +553,8 @@
         document.getElementById('nicknameInput').value = currentUser;
         await loadContacts();
         await loadPublic();
-        alert(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
+        // 显示成功模态框，替代 alert
+        showSuccessModal(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
     }
 
     async function adminChangeName() {
@@ -667,7 +693,6 @@
         });
     });
 
-    // 初始化
     (async () => {
         const saved = localStorage.getItem('wall_user_saved');
         if (saved) {
@@ -680,7 +705,6 @@
         await loadPublic();
         if (currentUser) await loadContacts();
 
-        // 实时订阅
         supabaseClient.channel('public-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'public_messages' }, () => loadPublic())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'public_message_replies' }, () => loadPublic())
