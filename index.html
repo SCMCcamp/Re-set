@@ -3,287 +3,729 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RE:Set 留言墙 | 稳定修复版</title>
+    <title>RE:Set 留言墙 | 便利贴+评论+私信</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #f0ebe1; font-family: system-ui, sans-serif; padding: 16px; }
-        .app { max-width: 1200px; margin: 0 auto; }
-        .card { background: white; border-radius: 28px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        input, textarea { width: 100%; padding: 12px; border-radius: 40px; border: 1.5px solid #e2e8f0; margin-bottom: 12px; font-family: inherit; }
-        button { background: #547443; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #3d5c30; }
-        .flex { display: flex; gap: 20px; flex-wrap: wrap; }
-        .flex-1 { flex: 1; min-width: 280px; }
-        .msg { background: #f8fafc; border-radius: 20px; padding: 12px; margin-bottom: 12px; border-left: 4px solid #547443; }
-        .msg .name { font-weight: bold; }
-        .msg .time { font-size: 0.7rem; color: #94a3b8; float: right; }
-        .delete-btn { background: none; border: none; color: #c9b696; cursor: pointer; font-size: 0.7rem; margin-top: 6px; }
-        .delete-btn:hover { color: #dc2626; }
-        .chat-bubble { padding: 8px 12px; border-radius: 20px; margin-bottom: 8px; max-width: 80%; word-break: break-word; }
-        .bubble-sent { background: #547443; color: white; align-self: flex-end; }
-        .bubble-received { background: white; border: 1px solid #e2e8f0; align-self: flex-start; }
-        .chat-container { display: flex; flex-direction: column; max-height: 400px; overflow-y: auto; }
-        .user-badge { background: #e8f0e5; padding: 6px 12px; border-radius: 40px; display: inline-block; }
-        hr { margin: 15px 0; }
-        .error { color: #dc2626; margin-top: 8px; display: none; font-size: 0.85rem; }
-        .success { color: #547443; background: #e8f0e5; padding: 8px; border-radius: 20px; margin-top: 8px; display: none; }
+        body { 
+            background: #f0ebe1;
+            background-image: radial-gradient(#d4c9b8 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            padding: 16px; 
+            min-height: 100vh;
+        }
+        .app { max-width: 1400px; margin: 0 auto; }
+        
+        .logo-card {
+            background: white;
+            border-radius: 28px;
+            padding: 12px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
+        .logo-text h1 { color: #547443; font-size: 1.4rem; }
+        .logo-text p { color: #8b7a66; font-size: 0.7rem; }
+        
+        .user-menu { position: relative; cursor: pointer; }
+        .user-badge {
+            background: #e8f0e5;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            color: #547443;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .user-badge:hover { background: #d4e0cd; }
+        .user-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-width: 180px;
+            z-index: 100;
+            overflow: hidden;
+            display: none;
+        }
+        .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; border-bottom: 1px solid #edf2f7; }
+        .dropdown-item:hover { background: #f8fafc; }
+        
+        .tab-nav { display: flex; gap: 12px; margin-bottom: 24px; background: transparent; border-radius: 60px; padding: 0; }
+        .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .tab-btn.active { background: #547443; color: white; box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .nickname-card {
+            background: white;
+            border-radius: 24px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
+        .nickname-group input:focus { outline: none; border-color: #547443; }
+        .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
+        .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .nickname-group button:hover { background: #3d5c30; }
+        .nickname-group button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
+        .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        .admin-actions button:hover { background: #b85e00; }
+        .admin-actions .exit-admin { background: #64748b; }
+        
+        .whiteboard {
+            background: #fdf8ed;
+            border-radius: 32px;
+            padding: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border: 1px solid #e8dcc8;
+        }
+        .whiteboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px dashed #d4c5a8; }
+        .whiteboard-header h2 { color: #5c4b2e; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
+        .sticky-input { background: #fffef7; border-radius: 20px; padding: 15px; margin-bottom: 25px; border: 1px solid #e8e0d0; }
+        .sticky-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e0d5c0; border-radius: 20px; font-size: 1rem; font-family: inherit; background: white; resize: vertical; }
+        .sticky-input textarea:focus { outline: none; border-color: #547443; }
+        .sticky-input button {
+            margin-top: 12px;
+            background: #547443;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+        }
+        .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
+        
+        .sticky-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        .sticky-note {
+            background: #fffaec;
+            padding: 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+            border-left: 6px solid #547443;
+            display: flex;
+            flex-direction: column;
+        }
+        .sticky-note:hover { transform: translateY(-3px); }
+        .sticky-note:nth-child(odd) { rotate: -0.5deg; }
+        .sticky-note:nth-child(even) { rotate: 0.8deg; }
+        .sticky-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .sticky-author { background: #e8e0d0; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 600; color: #547443; }
+        .sticky-time { font-size: 0.65rem; color: #aa9f89; }
+        .sticky-content { font-size: 0.9rem; line-height: 1.45; color: #3d3522; word-break: break-word; margin-bottom: 8px; }
+        .sticky-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+        .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; }
+        .delete-sticky:hover { background: #fee2e2; color: #dc2626; }
+        .reply-toggle {
+            background: none;
+            border: none;
+            color: #547443;
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .reply-toggle:hover { background: #e8f0e5; }
+        
+        /* 评论区域 */
+        .replies-section {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px dashed #e0d5c0;
+        }
+        .reply-item {
+            font-size: 0.75rem;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0e6d0;
+            color: #4a3f2c;
+        }
+        .reply-author { font-weight: 600; color: #547443; margin-right: 8px; }
+        .reply-time { font-size: 0.6rem; color: #aa9f89; float: right; }
+        .reply-content { word-break: break-word; margin-top: 2px; }
+        .reply-input-area {
+            margin-top: 8px;
+            display: none;
+            gap: 8px;
+            align-items: center;
+        }
+        .reply-input-area input {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 30px;
+            border: 1px solid #e0d5c0;
+            font-size: 0.75rem;
+        }
+        .reply-input-area button {
+            background: #547443;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+        
+        /* 私信布局 (保持原样) */
+        .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
+        .contact-list { width: 280px; background: white; border-radius: 28px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        .contact-header { background: #547443; color: white; padding: 18px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .new-chat-btn { background: rgba(255,255,255,0.25); border: none; color: white; padding: 8px 16px; border-radius: 40px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+        .new-chat-btn:hover { background: rgba(255,255,255,0.4); }
+        .contact-items { flex: 1; overflow-y: auto; max-height: 520px; }
+        .contact-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #edf2f7; cursor: pointer; transition: 0.15s; }
+        .contact-item:hover { background: #f8fafc; }
+        .contact-item.active { background: #e8f0e5; border-left: 4px solid #547443; }
+        .contact-avatar { width: 44px; height: 44px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 1.1rem; }
+        .contact-info { flex: 1; }
+        .contact-name { font-weight: 600; color: #1e293b; }
+        .contact-preview { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+        .contact-badge { background: #54744320; padding: 2px 8px; border-radius: 30px; font-size: 0.6rem; color: #547443; }
+        .empty-contact { text-align: center; color: #94a3b8; padding: 40px; font-style: italic; }
+        
+        .chat-area { flex: 1; background: white; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .chat-header { background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #edf2f7; display: flex; align-items: center; gap: 12px; justify-content: space-between; }
+        .chat-header .avatar { width: 40px; height: 40px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; }
+        .chat-header h3 { color: #1e293b; flex: 1; }
+        .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; cursor: pointer; }
+        .delete-user-btn:hover { background: #dc2626; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9fafc; min-height: 400px; max-height: 450px; }
+        .chat-bubble { display: flex; flex-direction: column; max-width: 80%; }
+        .bubble-sent { align-self: flex-end; }
+        .bubble-received { align-self: flex-start; }
+        .bubble-content { padding: 10px 16px; border-radius: 22px; font-size: 0.9rem; line-height: 1.4; word-break: break-word; }
+        .bubble-sent .bubble-content { background: #547443; color: white; border-bottom-right-radius: 6px; }
+        .bubble-received .bubble-content { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 6px; }
+        .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; justify-content: flex-end; }
+        .chat-input-area { padding: 16px; background: white; border-top: 1px solid #edf2f7; display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; }
+        .chat-input-area input:focus { outline: none; border-color: #547443; }
+        .chat-input-area button { background: #547443; border: none; color: white; padding: 0 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-container {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            width: 360px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.2s ease;
+        }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-container h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
+        .user-list-modal { max-height: 350px; overflow-y: auto; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 8px; border-bottom: 1px solid #edf2f7; }
+        .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
+        .user-select-btn:hover { background: #3d5c30; }
+        .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
+        .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
+        .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        
+        footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
+        
+        @media (max-width: 700px) {
+            .private-layout { flex-direction: column; }
+            .contact-list { width: 100%; max-height: 300px; }
+            .tab-btn { font-size: 0.9rem; padding: 12px 16px; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app">
-    <div class="card">
-        <h1>📮 RE:Set 留言墙</h1>
-        <p>全球互通 · 实时更新</p>
+    <div class="logo-card">
+        <div class="logo-area">
+            <div class="logo-icon">R</div>
+            <div class="logo-text">
+                <h1>RE:Set 留言墙</h1>
+                <p>便利贴白板 · 评论 · 私信聊天室</p>
+            </div>
+        </div>
+        <div class="user-menu" id="userMenu">
+            <div class="user-badge" id="currentUserBadge">👤 未设置昵称 ▼</div>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-item" id="adminLoginBtn">🔐 管理员登录</div>
+            </div>
+        </div>
     </div>
 
-    <!-- 昵称设置卡片 -->
-    <div class="card" id="nicknameCard">
-        <div class="flex" style="gap: 10px;">
-            <input type="text" id="nicknameInput" placeholder="输入你的昵称" style="flex:1">
+    <div class="nickname-card">
+        <div class="nickname-group">
+            <input type="text" id="nicknameInput" placeholder="输入你的昵称">
             <button id="setNameBtn">设置昵称</button>
         </div>
-        <div id="nicknameError" class="error"></div>
-        <div id="nicknameSuccess" class="success"></div>
+        <div id="adminActions" class="admin-actions">
+            <button id="resetNameBtn">✏️ 修改任意昵称</button>
+            <button id="showUsersBtn">📋 用户列表</button>
+            <button id="exitAdminBtn" class="exit-admin">🚪 退出管理员</button>
+        </div>
+        <span id="adminBadge" style="display:none; font-size:0.7rem; color:#d97706; margin-left:10px;">👑 管理员模式</span>
     </div>
 
-    <!-- 主功能区域（初始隐藏） -->
-    <div id="mainContent" style="display: none;">
-        <div class="flex">
-            <!-- 公开留言墙 -->
-            <div class="flex-1">
-                <div class="card">
-                    <h2>📌 便利贴墙</h2>
-                    <textarea id="publicContent" rows="2" placeholder="写下你的留言..."></textarea>
-                    <button id="postPublicBtn">发布留言</button>
-                    <div id="publicList" style="margin-top: 20px;">加载中...</div>
-                </div>
-            </div>
-            <!-- 私信区域 -->
-            <div class="flex-1">
-                <div class="card">
-                    <h2>💬 私信</h2>
-                    <div class="flex" style="gap: 10px; margin-bottom: 12px;">
-                        <input type="text" id="privateTo" placeholder="对方昵称" style="flex:1">
-                        <button id="sendPrivateBtn">发送</button>
-                    </div>
-                    <textarea id="privateContent" rows="2" placeholder="输入私信内容..."></textarea>
-                    <div id="privateList" style="margin-top: 20px; max-height: 400px; overflow-y: auto;">加载中...</div>
-                </div>
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 16px;">
-            <span class="user-badge" id="currentUserDisplay"></span>
-            <button id="adminBtn" style="background:#d97706; margin-left: 12px; padding: 6px 12px;">管理员登录</button>
-            <button id="exitAdminBtn" style="background:#64748b; margin-left: 6px; padding: 6px 12px; display: none;">退出管理员</button>
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="tab1">📌 留言墙</button>
+        <button class="tab-btn" data-tab="tab2">💬 私信</button>
+    </div>
+
+    <div id="tab1" class="tab-content active">
+        <div class="whiteboard">
+            <div class="whiteboard-header"><h2><span>📌</span> 便利贴白板墙</h2><span style="font-size:12px; color:#aa9f89;">✨ 所有人可见 · 可评论</span></div>
+            <div class="sticky-input"><textarea id="publicContent" rows="3" placeholder="写张便利贴吧... 会贴在白板上 ✨"></textarea><button id="postPublicBtn">📝 贴上便利贴</button></div>
+            <div class="sticky-grid" id="publicList">加载中...</div>
         </div>
     </div>
+
+    <div id="tab2" class="tab-content">
+        <div class="private-layout">
+            <div class="contact-list">
+                <div class="contact-header"><span>📋 联系人</span><button class="new-chat-btn" id="newChatBtn">+ 新聊天</button></div>
+                <div class="contact-items" id="contactList">加载中...</div>
+            </div>
+            <div class="chat-area">
+                <div class="chat-header" id="chatHeader" style="display: none;"><div class="avatar" id="chatAvatar">?</div><h3 id="chatWithName">选择联系人</h3><button id="deleteUserBtn" class="delete-user-btn" style="display:none;">🗑️ 删除用户</button></div>
+                <div class="chat-messages" id="chatMessages"><div class="empty-chat">💬 从左列表选择一个联系人开始聊天</div></div>
+                <div class="chat-input-area" id="chatInputArea" style="display: none;"><input type="text" id="chatMessageInput" placeholder="输入消息..."><button id="sendChatBtn">发送</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
+    <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
+    <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
+    <footer>💾 数据互通 | 便利贴所有人可见并可评论 | 私信仅双方可见</footer>
 </div>
 
 <script>
-    // Supabase 配置
     const SUPABASE_URL = "https://chfanuzhklzzawbcazjp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf";
     const ADMIN_PASSWORD = "reset2024";
 
-    // 创建客户端
-    const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = "";
     let isAdmin = false;
+    let currentContact = null;
+    let allUsersCache = [];
 
-    // 辅助函数
-    function escapeHtml(str) {
-        if (!str) return "";
-        return str.replace(/[&<>]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[m]));
-    }
-    function formatTime(ts) {
-        let d = new Date(ts);
-        return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-    }
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+    function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
 
-    // 显示成功/错误消息
-    function showError(msg) {
-        const errDiv = document.getElementById("nicknameError");
-        errDiv.innerText = msg;
-        errDiv.style.display = "block";
-        setTimeout(() => errDiv.style.display = "none", 4000);
-    }
-    function showSuccess(msg) {
-        const sucDiv = document.getElementById("nicknameSuccess");
-        sucDiv.innerText = msg;
-        sucDiv.style.display = "block";
-        setTimeout(() => sucDiv.style.display = "none", 3000);
+    // 获取所有用户（从 public_messages 和 private_messages 中提取）
+    async function getAllUsers() {
+        let users = new Set();
+        try {
+            const { data: publics } = await supabase.from('public_messages').select('username');
+            publics?.forEach(m => m.username && users.add(m.username));
+            const { data: privates } = await supabase.from('private_messages').select('fromUser,toUser');
+            privates?.forEach(m => { if(m.fromUser) users.add(m.fromUser); if(m.toUser) users.add(m.toUser); });
+        } catch(e) { console.error(e); }
+        return Array.from(users).filter(u => u && u !== currentUser);
     }
 
-    // 加载公开留言
-    async function loadPublicMessages() {
-        const { data, error } = await _supabase.from("public_messages").select("*").order("timestamp", { ascending: false });
-        if (error) { console.error(error); return; }
-        const container = document.getElementById("publicList");
-        if (!data.length) { container.innerHTML = "<p>✨ 暂无留言，第一个发一条吧～</p>"; return; }
-        container.innerHTML = data.map(m => `
-            <div class="msg">
-                <div><span class="name">✏️ ${escapeHtml(m.username)}</span><span class="time">${formatTime(m.timestamp)}</span></div>
-                <div>${escapeHtml(m.content)}</div>
-                ${(currentUser === m.username || isAdmin) ? `<button class="delete-btn" onclick="deletePublicMessage(${m.id})">删除</button>` : ""}
-            </div>
-        `).join("");
+    // 加载公开留言及评论
+    async function loadPublic() {
+        try {
+            const { data: messages, error } = await supabase.from('public_messages').select('*').order('timestamp', { ascending: false });
+            if (error) throw error;
+            const container = document.getElementById('publicList');
+            if (!messages.length) { container.innerHTML = '<div class="empty-sticky">📌 还没有便利贴</div>'; return; }
+            
+            // 获取所有评论
+            const { data: allReplies } = await supabase.from('public_message_replies').select('*');
+            const repliesByMsgId = {};
+            allReplies?.forEach(r => { if (!repliesByMsgId[r.message_id]) repliesByMsgId[r.message_id] = []; repliesByMsgId[r.message_id].push(r); });
+            
+            container.innerHTML = '';
+            for (let msg of messages) {
+                const canDelete = (currentUser === msg.username) || isAdmin;
+                const replies = repliesByMsgId[msg.id] || [];
+                const replyHtml = replies.map(r => `
+                    <div class="reply-item">
+                        <div><span class="reply-author">${escapeHtml(r.username)}</span><span class="reply-time">${formatTime(r.timestamp)}</span></div>
+                        <div class="reply-content">${escapeHtml(r.content)}</div>
+                        ${(currentUser === r.username || isAdmin) ? `<button class="delete-sticky" onclick="deleteReply(${r.id}, ${msg.id})" style="font-size:0.65rem;">删除</button>` : ''}
+                    </div>
+                `).join('');
+                
+                container.innerHTML += `
+                    <div class="sticky-note" data-id="${msg.id}">
+                        <div class="sticky-header"><span class="sticky-author">✏️ ${escapeHtml(msg.username)}</span><span class="sticky-time">${formatTime(msg.timestamp)}</span></div>
+                        <div class="sticky-content">${escapeHtml(msg.content)}</div>
+                        <div class="sticky-footer">
+                            <button class="reply-toggle" onclick="toggleReplyInput(${msg.id})">💬 回复</button>
+                            ${canDelete ? `<button class="delete-sticky" onclick="deletePublic(${msg.id})">🗑️ 撕掉</button>` : ''}
+                        </div>
+                        <div class="replies-section" id="replies-${msg.id}">
+                            <div class="replies-list">${replyHtml}</div>
+                            <div class="reply-input-area" id="reply-input-${msg.id}">
+                                <input type="text" id="reply-content-${msg.id}" placeholder="写评论...">
+                                <button onclick="submitReply(${msg.id})">发送</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        } catch(e) { console.error(e); document.getElementById('publicList').innerHTML = '<div class="empty-sticky">⚠️ 加载失败</div>'; }
     }
 
-    // 加载私信
-    async function loadPrivateMessages() {
-        if (!currentUser) return;
-        const { data, error } = await _supabase
-            .from("private_messages")
-            .select("*")
-            .or(`fromUser.eq.${currentUser},toUser.eq.${currentUser}`)
-            .order("timestamp", { ascending: true });
-        if (error) { console.error(error); return; }
-        const container = document.getElementById("privateList");
-        if (!data.length) { container.innerHTML = "<p>💬 暂无私信，快给朋友发一条吧～</p>"; return; }
-        container.innerHTML = data.map(m => {
-            const isSender = m.fromUser === currentUser;
-            return `
-                <div class="chat-bubble ${isSender ? "bubble-sent" : "bubble-received"}">
-                    <div><strong>${escapeHtml(isSender ? "我" : m.fromUser)}</strong> <span style="font-size:0.7rem;">${formatTime(m.timestamp)}</span></div>
-                    <div>${escapeHtml(m.content)}</div>
-                    ${(isSender || isAdmin) ? `<button class="delete-btn" onclick="deletePrivateMessage(${m.id})" style="margin-top:4px;">删除</button>` : ""}
-                </div>
-            `;
-        }).join("");
-        container.scrollTop = container.scrollHeight;
-    }
+    // 切换评论输入框显示
+    window.toggleReplyInput = (msgId) => {
+        const el = document.getElementById(`reply-input-${msgId}`);
+        if (el) el.style.display = el.style.display === 'flex' ? 'none' : 'flex';
+    };
 
-    // 发布公开留言
-    async function postPublicMessage() {
-        if (!currentUser) { showError("请先设置昵称"); return; }
-        const content = document.getElementById("publicContent").value.trim();
-        if (!content) { showError("内容不能为空"); return; }
-        const { error } = await _supabase.from("public_messages").insert({
+    // 提交评论
+    window.submitReply = async (msgId) => {
+        if (!currentUser) { alert('请先设置昵称'); return; }
+        const input = document.getElementById(`reply-content-${msgId}`);
+        const content = input.value.trim();
+        if (!content) { alert('请输入评论内容'); return; }
+        const { error } = await supabase.from('public_message_replies').insert({
+            message_id: msgId,
             username: currentUser,
             content: content,
             timestamp: Date.now()
         });
-        if (error) { showError("发布失败: " + error.message); return; }
-        document.getElementById("publicContent").value = "";
-        await loadPublicMessages();
-        showSuccess("留言发布成功！");
-    }
+        if (error) { alert('评论失败: ' + error.message); return; }
+        input.value = '';
+        await loadPublic();
+    };
 
-    // 发送私信
-    async function sendPrivateMessage() {
-        if (!currentUser) { showError("请先设置昵称"); return; }
-        const toUser = document.getElementById("privateTo").value.trim();
-        const content = document.getElementById("privateContent").value.trim();
-        if (!toUser) { showError("请输入对方昵称"); return; }
-        if (!content) { showError("请输入消息内容"); return; }
-        if (toUser === currentUser) { showError("不能给自己发私信"); return; }
-        // 检查对方用户是否存在（通过查询 users 表，但这里为了简化，直接尝试发送，由数据库约束）
-        const { error } = await _supabase.from("private_messages").insert({
-            fromUser: currentUser,
-            toUser: toUser,
-            content: content,
-            timestamp: Date.now()
+    // 删除评论
+    window.deleteReply = async (replyId, msgId) => {
+        if (!confirm('删除这条评论？')) return;
+        const { error } = await supabase.from('public_message_replies').delete().eq('id', replyId);
+        if (!error) await loadPublic();
+        else alert('删除失败');
+    };
+
+    // 加载联系人列表（私信）
+    async function loadContacts() {
+        if (!currentUser) { document.getElementById('contactList').innerHTML = '<div class="empty-contact">请先设置昵称</div>'; return; }
+        const { data, error } = await supabase.from('private_messages').select('fromUser,toUser').or(`fromUser.eq.${currentUser},toUser.eq.${currentUser}`);
+        if (error) return;
+        const contactSet = new Set();
+        data.forEach(m => {
+            if (m.fromUser === currentUser) contactSet.add(m.toUser);
+            if (m.toUser === currentUser) contactSet.add(m.fromUser);
         });
-        if (error) { showError("发送失败: " + error.message); return; }
-        document.getElementById("privateTo").value = "";
-        document.getElementById("privateContent").value = "";
-        await loadPrivateMessages();
-        showSuccess("私信已发送！");
-    }
-
-    // 删除公开留言
-    window.deletePublicMessage = async function(id) {
-        if (!confirm("确定删除这条留言吗？")) return;
-        const { error } = await _supabase.from("public_messages").delete().eq("id", id);
-        if (error) { showError("删除失败: " + error.message); return; }
-        await loadPublicMessages();
-    };
-    // 删除私信
-    window.deletePrivateMessage = async function(id) {
-        if (!confirm("确定删除这条私信吗？")) return;
-        const { error } = await _supabase.from("private_messages").delete().eq("id", id);
-        if (error) { showError("删除失败: " + error.message); return; }
-        await loadPrivateMessages();
-    };
-
-    // 设置昵称（写入 users 表）
-    async function setNickname() {
-        const newName = document.getElementById("nicknameInput").value.trim();
-        if (!newName) { showError("请输入昵称"); return; }
-        // 检查昵称是否已存在
-        const { data: existing } = await _supabase.from("users").select("username").eq("username", newName).maybeSingle();
-        if (existing) { showError("该昵称已被使用，请换一个"); return; }
-        // 插入新用户
-        const { error } = await _supabase.from("users").insert({ username: newName });
-        if (error) { showError("设置失败: " + error.message); return; }
-        currentUser = newName;
-        localStorage.setItem("wall_user_saved", currentUser);
-        document.getElementById("currentUserDisplay").innerText = `当前用户：${escapeHtml(currentUser)}`;
-        // 隐藏昵称卡片，显示主内容
-        document.getElementById("nicknameCard").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
-        // 加载数据
-        await loadPublicMessages();
-        await loadPrivateMessages();
-        showSuccess(`✅ 昵称“${currentUser}”设置成功！`);
-    }
-
-    // 管理员登录
-    function adminLogin() {
-        const pwd = prompt("请输入管理员密码：");
-        if (pwd === ADMIN_PASSWORD) {
-            isAdmin = true;
-            document.getElementById("exitAdminBtn").style.display = "inline-block";
-            document.getElementById("adminBtn").style.display = "none";
-            alert("管理员模式已启用");
-            loadPublicMessages();
-            loadPrivateMessages();
-        } else {
-            alert("密码错误");
+        const contacts = Array.from(contactSet);
+        const container = document.getElementById('contactList');
+        if (!contacts.length) { container.innerHTML = '<div class="empty-contact">💬 暂无联系人<br>点击"+ 新聊天"开始对话</div>'; return; }
+        container.innerHTML = '';
+        for (let contact of contacts) {
+            const { data: msgs } = await supabase
+                .from('private_messages')
+                .select('content')
+                .or(`and(fromUser.eq.${currentUser},toUser.eq.${contact}),and(fromUser.eq.${contact},toUser.eq.${currentUser})`)
+                .order('timestamp', { ascending: false })
+                .limit(1);
+            const lastMsg = msgs?.[0]?.content || '';
+            container.innerHTML += `<div class="contact-item" onclick="selectContact('${escapeHtml(contact)}')"><div class="contact-avatar">${escapeHtml(contact.charAt(0).toUpperCase())}</div><div class="contact-info"><div class="contact-name">${escapeHtml(contact)}</div><div class="contact-preview">${escapeHtml(lastMsg.slice(0,30))}</div></div><div class="contact-badge">📬</div></div>`;
         }
+        if (currentContact) {
+            const active = document.querySelector(`.contact-item[onclick="selectContact('${currentContact}')"]`);
+            if (active) active.classList.add('active');
+        }
+    }
+
+    async function getMessagesWith(user) {
+        const { data, error } = await supabase
+            .from('private_messages')
+            .select('*')
+            .or(`and(fromUser.eq.${currentUser},toUser.eq.${user}),and(fromUser.eq.${user},toUser.eq.${currentUser})`)
+            .order('timestamp', { ascending: true });
+        if (error) return [];
+        return data;
+    }
+
+    window.selectContact = async (contact) => {
+        if (!currentUser) return;
+        currentContact = contact;
+        const msgs = await getMessagesWith(contact);
+        const container = document.getElementById('chatMessages');
+        if (!msgs.length) container.innerHTML = '<div class="empty-chat">💬 没有消息，发一条吧～</div>';
+        else {
+            container.innerHTML = msgs.map(m => {
+                const isSender = m.fromUser === currentUser;
+                const canDelete = isSender || isAdmin;
+                return `<div class="chat-bubble ${isSender ? 'bubble-sent' : 'bubble-received'}"><div class="bubble-content">${escapeHtml(m.content)}</div><div class="bubble-info"><span>${formatTime(m.timestamp)}</span>${canDelete ? `<button style="background:none; border:none; color:#94a3b8; cursor:pointer;" onclick="deletePrivateMsg(${m.id})">删除</button>` : ''}</div></div>`;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+        document.getElementById('chatHeader').style.display = 'flex';
+        document.getElementById('chatInputArea').style.display = 'flex';
+        document.getElementById('chatAvatar').innerText = contact.charAt(0).toUpperCase();
+        document.getElementById('chatWithName').innerText = contact;
+        document.getElementById('deleteUserBtn').style.display = (isAdmin && contact !== currentUser) ? 'inline-block' : 'none';
+        document.querySelectorAll('.contact-item').forEach(el => el.classList.remove('active'));
+        const active = document.querySelector(`.contact-item[onclick="selectContact('${contact}')"]`);
+        if (active) active.classList.add('active');
+        document.getElementById('chatMessageInput').focus();
+    };
+
+    async function sendPrivateMessage(toUser, content) {
+        if (!content.trim()) return false;
+        const { error } = await supabase.from('private_messages').insert({ fromUser: currentUser, toUser, content: content.trim(), timestamp: Date.now() });
+        return !error;
+    }
+
+    window.sendToCurrent = async () => {
+        if (!currentUser || !currentContact) return;
+        const input = document.getElementById('chatMessageInput');
+        const content = input.value.trim();
+        if (!content) return;
+        input.value = '';
+        const success = await sendPrivateMessage(currentContact, content);
+        if (success) { await loadContacts(); await window.selectContact(currentContact); }
+        else { alert('发送失败'); input.value = content; }
+    };
+
+    window.deletePrivateMsg = async (id) => {
+        if (!confirm('删除这条消息？')) return;
+        await supabase.from('private_messages').delete().eq('id', id);
+        if (currentContact) await window.selectContact(currentContact);
+        await loadContacts();
+    };
+
+    async function postPublic() {
+        if (!currentUser) { alert('请先设置昵称'); return; }
+        const content = document.getElementById('publicContent').value.trim();
+        if (!content) return;
+        const { error } = await supabase.from('public_messages').insert({ username: currentUser, content, timestamp: Date.now() });
+        if (!error) { document.getElementById('publicContent').value = ''; await loadPublic(); alert('✅ 便利贴贴上啦！'); }
+        else alert('发布失败');
+    }
+
+    window.deletePublic = async (id) => {
+        if (!confirm('撕掉这张便利贴？')) return;
+        await supabase.from('public_messages').delete().eq('id', id);
+        await loadPublic();
+    };
+
+    async function setUserName() {
+        let newName = document.getElementById('nicknameInput').value.trim();
+        if (!newName) { alert('请输入昵称'); return; }
+        const users = await getAllUsers();
+        if (users.includes(newName)) { alert('❌ 该昵称已被使用，请换一个'); return; }
+        currentUser = newName;
+        localStorage.setItem('wall_user_saved', currentUser);
+        document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
+        document.getElementById('nicknameInput').disabled = true;
+        document.getElementById('setNameBtn').disabled = true;
+        document.getElementById('nicknameInput').value = currentUser;
+        await loadContacts();
+        await loadPublic();
+        alert(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
+    }
+
+    // 管理员功能（仅调用 RPC，需要预先创建函数）
+    async function adminChangeName() {
+        if (!isAdmin) return;
+        const oldName = prompt('输入要修改的用户昵称：');
+        if (!oldName) return;
+        const newName = prompt('输入新昵称：');
+        if (!newName) return;
+        const { error } = await supabase.rpc('admin_rename_user', { old_name: oldName, new_name: newName });
+        if (error) alert('改名失败：' + error.message);
+        else {
+            alert(`✅ 用户 "${oldName}" 已改名为 "${newName}"`);
+            if (currentUser === oldName) {
+                currentUser = newName;
+                localStorage.setItem('wall_user_saved', currentUser);
+                document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
+                if (currentContact === oldName) currentContact = newName;
+            }
+            await loadPublic();
+            await loadContacts();
+            if (currentContact) await window.selectContact(currentContact);
+        }
+    }
+
+    async function adminDeleteUserFromList(username) {
+        if (!isAdmin || username === currentUser) { alert('不能删除自己'); return; }
+        if (!confirm(`⚠️ 确定删除用户 "${username}" 及其所有数据？`)) return;
+        const { error } = await supabase.rpc('admin_delete_user', { target_name: username });
+        if (error) alert('删除失败：' + error.message);
+        else {
+            alert(`✅ 用户 "${username}" 已删除`);
+            if (currentContact === username) {
+                currentContact = null;
+                document.getElementById('chatHeader').style.display = 'none';
+                document.getElementById('chatInputArea').style.display = 'none';
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
+            }
+            await loadPublic();
+            await loadContacts();
+            document.getElementById('userListModal').style.display = 'none';
+        }
+    }
+
+    async function openUserListModal() {
+        if (!isAdmin) return;
+        const users = await getAllUsers();
+        const container = document.getElementById('allUsersList');
+        container.innerHTML = users.map(u => `<div class="user-item"><div><span class="user-avatar-small">${escapeHtml(u.charAt(0).toUpperCase())}</span><span>${escapeHtml(u)}</span></div><button class="user-delete-btn" onclick="adminDeleteUserFromList('${escapeHtml(u)}')">🗑️ 删除</button></div>`).join('');
+        document.getElementById('userListModal').style.display = 'flex';
+        document.getElementById('searchUserListInput').oninput = (e) => {
+            const kw = e.target.value.toLowerCase();
+            const filtered = users.filter(u => u.toLowerCase().includes(kw));
+            container.innerHTML = filtered.map(u => `<div class="user-item"><div>${escapeHtml(u)}</div><button onclick="adminDeleteUserFromList('${escapeHtml(u)}')">删除</button></div>`).join('');
+        };
+    }
+
+    async function openSearchModal() {
+        if (!currentUser) { alert('请先设置昵称'); return; }
+        const users = await getAllUsers();
+        document.getElementById('searchUserModal').style.display = 'flex';
+        document.getElementById('searchUserInput').value = '';
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = '<div style="padding:20px; text-align:center;">输入关键词搜索</div>';
+        document.getElementById('searchUserInput').oninput = (e) => {
+            const kw = e.target.value.toLowerCase();
+            const filtered = users.filter(u => u.toLowerCase().includes(kw));
+            if (!filtered.length) resultsDiv.innerHTML = '<div style="padding:20px; text-align:center;">😢 没有找到用户</div>';
+            else resultsDiv.innerHTML = filtered.map(u => `<div class="user-item"><div>${escapeHtml(u)}</div><button class="user-select-btn" onclick="startChatWith('${escapeHtml(u)}')">💬 发消息</button></div>`).join('');
+        };
+    }
+
+    window.startChatWith = async (user) => {
+        if (user === currentUser) { alert('不能和自己聊天'); return; }
+        document.getElementById('searchUserModal').style.display = 'none';
+        await loadContacts();
+        await window.selectContact(user);
+    };
+
+    function openAdminLogin() { document.getElementById('adminLoginModal').style.display = 'flex'; }
+    function verifyAdmin() {
+        if (document.getElementById('adminPasswordInput').value === ADMIN_PASSWORD) {
+            isAdmin = true;
+            document.getElementById('adminBadge').style.display = 'inline-block';
+            document.getElementById('adminActions').style.display = 'flex';
+            document.getElementById('adminLoginModal').style.display = 'none';
+            alert('✅ 管理员模式已启用');
+            loadPublic();
+            if (currentContact) window.selectContact(currentContact);
+        } else alert('密码错误');
     }
     function exitAdmin() {
         isAdmin = false;
-        document.getElementById("exitAdminBtn").style.display = "none";
-        document.getElementById("adminBtn").style.display = "inline-block";
-        alert("已退出管理员模式");
-        loadPublicMessages();
-        loadPrivateMessages();
+        document.getElementById('adminBadge').style.display = 'none';
+        document.getElementById('adminActions').style.display = 'none';
+        document.getElementById('deleteUserBtn').style.display = 'none';
+        alert('已退出管理员模式');
+        loadPublic();
+        if (currentContact) window.selectContact(currentContact);
     }
 
-    // 页面初始化
-    async function init() {
-        // 绑定事件
-        document.getElementById("setNameBtn").onclick = setNickname;
-        document.getElementById("postPublicBtn").onclick = postPublicMessage;
-        document.getElementById("sendPrivateBtn").onclick = sendPrivateMessage;
-        document.getElementById("adminBtn").onclick = adminLogin;
-        document.getElementById("exitAdminBtn").onclick = exitAdmin;
-
-        // 检查本地存储中是否有已保存的昵称
-        const saved = localStorage.getItem("wall_user_saved");
-        if (saved) {
-            // 验证该用户是否存在于 users 表
-            const { data } = await _supabase.from("users").select("username").eq("username", saved).maybeSingle();
-            if (data) {
-                currentUser = saved;
-                document.getElementById("currentUserDisplay").innerText = `当前用户：${escapeHtml(currentUser)}`;
-                document.getElementById("nicknameCard").style.display = "none";
-                document.getElementById("mainContent").style.display = "block";
-                await loadPublicMessages();
-                await loadPrivateMessages();
-                return;
-            } else {
-                localStorage.removeItem("wall_user_saved");
-            }
+    // 初始化
+    document.getElementById('setNameBtn').onclick = setUserName;
+    document.getElementById('postPublicBtn').onclick = postPublic;
+    document.getElementById('sendChatBtn').onclick = window.sendToCurrent;
+    document.getElementById('newChatBtn').onclick = openSearchModal;
+    document.getElementById('closeSearchModal').onclick = () => document.getElementById('searchUserModal').style.display = 'none';
+    document.getElementById('closeUserListBtn').onclick = () => document.getElementById('userListModal').style.display = 'none';
+    document.getElementById('adminLoginBtn').onclick = openAdminLogin;
+    document.getElementById('confirmAdminLogin').onclick = verifyAdmin;
+    document.getElementById('cancelAdminLogin').onclick = () => document.getElementById('adminLoginModal').style.display = 'none';
+    document.getElementById('exitAdminBtn').onclick = exitAdmin;
+    document.getElementById('resetNameBtn').onclick = adminChangeName;
+    document.getElementById('showUsersBtn').onclick = openUserListModal;
+    document.getElementById('deleteUserBtn').onclick = async () => {
+        if (currentContact && confirm(`⚠️ 删除用户 ${currentContact}？`)) {
+            await supabase.rpc('admin_delete_user', { target_name: currentContact });
+            alert('用户已删除');
+            currentContact = null;
+            await loadPublic();
+            await loadContacts();
+            document.getElementById('chatHeader').style.display = 'none';
+            document.getElementById('chatInputArea').style.display = 'none';
+            document.getElementById('chatMessages').innerHTML = '<div class="empty-chat">用户已删除</div>';
         }
-        // 未登录状态，显示昵称卡片
-        document.getElementById("nicknameCard").style.display = "block";
-        document.getElementById("mainContent").style.display = "none";
-    }
+    };
+    document.getElementById('chatMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') window.sendToCurrent(); });
+    document.getElementById('userMenu').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('userDropdown').classList.toggle('show'); });
+    document.addEventListener('click', () => document.getElementById('userDropdown').classList.remove('show'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            if (btn.dataset.tab === 'tab2' && currentUser) loadContacts();
+        });
+    });
 
-    init();
+    (async () => {
+        const saved = localStorage.getItem('wall_user_saved');
+        if (saved) {
+            currentUser = saved;
+            document.getElementById('currentUserBadge').innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
+            document.getElementById('nicknameInput').disabled = true;
+            document.getElementById('setNameBtn').disabled = true;
+            document.getElementById('nicknameInput').value = currentUser;
+        }
+        await loadPublic();
+        if (currentUser) await loadContacts();
+
+        // 实时订阅公开留言和评论
+        supabase.channel('public-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_messages' }, () => loadPublic())
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'public_message_replies' }, () => loadPublic())
+            .subscribe();
+        supabase.channel('private-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'private_messages' }, async () => {
+                if (currentUser) { await loadContacts(); if (currentContact) await window.selectContact(currentContact); }
+            })
+            .subscribe();
+    })();
 </script>
 </body>
 </html>
