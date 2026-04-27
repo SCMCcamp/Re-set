@@ -2,768 +2,243 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RE:Set 留言墙 | 便利贴 + 私信</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>留言墙并发测试工具</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            background: #f0ebe1;
-            background-image: radial-gradient(#d4c9b8 1px, transparent 1px);
-            background-size: 30px 30px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            padding: 16px; 
-            min-height: 100vh;
-        }
-        .app { max-width: 1400px; margin: 0 auto; }
-        
-        .logo-card {
-            background: white;
-            border-radius: 28px;
-            padding: 12px 20px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .logo-area { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-icon { background: #547443; width: 48px; height: 48px; border-radius: 25px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; }
-        .logo-text h1 { color: #547443; font-size: 1.4rem; }
-        .logo-text p { color: #8b7a66; font-size: 0.7rem; }
-        
-        .user-menu { position: relative; cursor: pointer; }
-        .user-badge {
-            background: #e8f0e5;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.85rem;
-            color: #547443;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .user-badge:hover { background: #d4e0cd; }
-        .user-dropdown {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-width: 180px;
-            z-index: 100;
-            overflow: hidden;
-            display: none;
-        }
-        .user-dropdown.show { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .dropdown-item { padding: 12px 16px; font-size: 0.85rem; cursor: pointer; transition: 0.15s; border-bottom: 1px solid #edf2f7; }
-        .dropdown-item:hover { background: #f8fafc; }
-        
-        .tab-nav { display: flex; gap: 12px; margin-bottom: 24px; background: transparent; border-radius: 60px; padding: 0; }
-        .tab-btn { flex: 1; padding: 14px 20px; border: none; background: white; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s; color: #8b7a66; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .tab-btn.active { background: #547443; color: white; box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        .nickname-card {
-            background: white;
-            border-radius: 24px;
-            padding: 16px 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .nickname-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-        .nickname-group input { flex: 1; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; background: white; font-size: 0.9rem; }
-        .nickname-group input:focus { outline: none; border-color: #547443; }
-        .nickname-group input:disabled { background: #f1f5f9; color: #475569; }
-        .nickname-group button { background: #547443; padding: 10px 20px; border: none; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .nickname-group button:hover { background: #3d5c30; }
-        .nickname-group button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .admin-actions { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: none; gap: 10px; flex-wrap: wrap; }
-        .admin-actions button { background: #d97706; border: none; padding: 8px 16px; border-radius: 40px; color: white; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .admin-actions button:hover { background: #b85e00; }
-        .admin-actions .exit-admin { background: #64748b; }
-        
-        .whiteboard {
-            background: #fdf8ed;
-            border-radius: 32px;
-            padding: 24px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            border: 1px solid #e8dcc8;
-        }
-        .whiteboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px dashed #d4c5a8; }
-        .whiteboard-header h2 { color: #5c4b2e; font-size: 1.4rem; display: flex; align-items: center; gap: 8px; }
-        .sticky-input { background: #fffef7; border-radius: 20px; padding: 15px; margin-bottom: 25px; border: 1px solid #e8e0d0; }
-        .sticky-input textarea { width: 100%; padding: 14px; border: 1.5px solid #e0d5c0; border-radius: 20px; font-size: 1rem; font-family: inherit; background: white; resize: vertical; }
-        .sticky-input textarea:focus { outline: none; border-color: #547443; }
-        .sticky-input button {
-            margin-top: 12px;
-            background: #547443;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .sticky-input button:hover { background: #3d5c30; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84,116,67,0.3); }
-        
-        .sticky-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-height: 550px;
-            overflow-y: auto;
-            padding: 5px;
-        }
-        .sticky-note {
-            background: #fffaec;
-            padding: 16px;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-            border-left: 6px solid #547443;
-        }
-        .sticky-note:hover { transform: translateY(-3px); }
-        .sticky-note:nth-child(odd) { rotate: -0.5deg; }
-        .sticky-note:nth-child(even) { rotate: 0.8deg; }
-        .sticky-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .sticky-author { background: #e8e0d0; padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 600; color: #547443; }
-        .sticky-time { font-size: 0.65rem; color: #aa9f89; }
-        .sticky-content { font-size: 0.9rem; line-height: 1.45; color: #3d3522; word-break: break-word; }
-        .sticky-footer { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
-        .delete-sticky { background: none; border: none; color: #c9b696; font-size: 0.7rem; cursor: pointer; padding: 4px 10px; border-radius: 20px; }
-        .delete-sticky:hover { background: #fee2e2; color: #dc2626; }
-        
-        .private-layout { display: flex; gap: 20px; min-height: 600px; flex-wrap: wrap; }
-        .contact-list {
-            width: 280px;
-            background: white;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-        .contact-header {
-            background: #547443;
-            color: white;
-            padding: 18px;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .new-chat-btn {
-            background: rgba(255,255,255,0.25);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
-        }
-        .new-chat-btn:hover { background: rgba(255,255,255,0.4); }
-        .contact-items { flex: 1; overflow-y: auto; max-height: 520px; }
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 18px;
-            border-bottom: 1px solid #edf2f7;
-            cursor: pointer;
-            transition: 0.15s;
-        }
-        .contact-item:hover { background: #f8fafc; }
-        .contact-item.active { background: #e8f0e5; border-left: 4px solid #547443; }
-        .contact-avatar { width: 44px; height: 44px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 1.1rem; }
-        .contact-info { flex: 1; }
-        .contact-name { font-weight: 600; color: #1e293b; }
-        .contact-preview { font-size: 0.7rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
-        .contact-badge { background: #54744320; padding: 2px 8px; border-radius: 30px; font-size: 0.6rem; color: #547443; }
-        .empty-contact { text-align: center; color: #94a3b8; padding: 40px; font-style: italic; }
-        
-        .chat-area {
-            flex: 1;
-            background: white;
-            border-radius: 28px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        .chat-header {
-            background: #f8fafc;
-            padding: 16px 20px;
-            border-bottom: 1px solid #edf2f7;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-content: space-between;
-        }
-        .chat-header .avatar { width: 40px; height: 40px; background: #e8e0d0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; }
-        .chat-header h3 { color: #1e293b; flex: 1; }
-        .delete-user-btn { background: #ef4444; border: none; color: white; padding: 6px 14px; border-radius: 40px; font-size: 0.7rem; cursor: pointer; }
-        .delete-user-btn:hover { background: #dc2626; }
-        
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #f9fafc;
-            min-height: 400px;
-            max-height: 450px;
-        }
-        .chat-bubble { display: flex; flex-direction: column; max-width: 80%; }
-        .bubble-sent { align-self: flex-end; }
-        .bubble-received { align-self: flex-start; }
-        .bubble-content {
-            padding: 10px 16px;
-            border-radius: 22px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            word-break: break-word;
-        }
-        .bubble-sent .bubble-content { background: #547443; color: white; border-bottom-right-radius: 6px; }
-        .bubble-received .bubble-content { background: white; color: #1e293b; border: 1px solid #e2e8f0; border-bottom-left-radius: 6px; }
-        .bubble-info { font-size: 0.6rem; color: #94a3b8; margin: 4px 12px 0; display: flex; gap: 10px; justify-content: flex-end; }
-        .chat-input-area {
-            padding: 16px;
-            background: white;
-            border-top: 1px solid #edf2f7;
-            display: flex;
-            gap: 10px;
-        }
-        .chat-input-area input {
-            flex: 1;
-            padding: 12px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 40px;
-            font-size: 0.9rem;
-        }
-        .chat-input-area input:focus { outline: none; border-color: #547443; }
-        .chat-input-area button {
-            background: #547443;
-            border: none;
-            color: white;
-            padding: 0 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .empty-chat { text-align: center; color: #94a3b8; padding: 60px; font-style: italic; }
-        
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-container {
-            background: white;
-            border-radius: 32px;
-            padding: 24px;
-            width: 360px;
-            max-width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3);
-            animation: modalFadeIn 0.2s ease;
-        }
-        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        .modal-container h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .modal-search { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 40px; font-size: 0.9rem; margin-bottom: 16px; }
-        .modal-search:focus { outline: none; border-color: #547443; }
-        .user-list-modal { max-height: 350px; overflow-y: auto; }
-        .user-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 8px;
-            border-bottom: 1px solid #edf2f7;
-        }
-        .user-avatar-small { width: 32px; height: 32px; background: #e8e0d0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: #547443; font-size: 0.8rem; margin-right: 10px; }
-        .user-select-btn { background: #547443; border: none; color: white; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; transition: 0.2s; }
-        .user-select-btn:hover { background: #3d5c30; }
-        .modal-buttons { display: flex; gap: 12px; margin-top: 16px; }
-        .modal-buttons button { flex: 1; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
-        .modal-buttons button:last-child { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        
-        footer { text-align: center; margin-top: 24px; font-size: 0.7rem; color: #8b7a66; }
-        
-        @media (max-width: 700px) {
-            .private-layout { flex-direction: column; }
-            .contact-list { width: 100%; max-height: 300px; }
-            .tab-btn { font-size: 0.9rem; padding: 12px 16px; }
-        }
+        body { font-family: system-ui; padding: 20px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 28px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #547443; }
+        button { background: #547443; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-right: 10px; }
+        .log { background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 20px; font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: auto; margin-top: 20px; white-space: pre-wrap; }
+        .stats { margin: 20px 0; display: flex; gap: 20px; flex-wrap: wrap; }
+        .stat { background: #f1f5f9; padding: 12px 20px; border-radius: 20px; }
+        .stat span { font-weight: bold; color: #547443; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 40px; }
+        .warning { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 20px; margin: 10px 0; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-<div class="app">
-    <div class="logo-card">
-        <div class="logo-area">
-            <div class="logo-icon">R</div>
-            <div class="logo-text">
-                <h1>RE:Set 留言墙</h1>
-                <p>便利贴白板 · 私信聊天室</p>
-            </div>
-        </div>
-        <div class="user-menu" id="userMenu">
-            <div class="user-badge" id="currentUserBadge">👤 未设置昵称 ▼</div>
-            <div class="user-dropdown" id="userDropdown">
-                <div class="dropdown-item" id="adminLoginBtn">🔐 管理员登录</div>
-            </div>
-        </div>
+<div class="container">
+    <h1>🧪 留言墙并发测试 (50 虚拟用户)</h1>
+    <p>⚠️ 注意：此测试会创建测试用户和留言，测试完成后可点击清理按钮删除所有测试数据。</p>
+    <div>
+        <label>Supabase URL:</label>
+        <input type="text" id="supabaseUrl" value="https://chfanuzhklzzawbcazjp.supabase.co">
+        <label>Supabase Anon Key:</label>
+        <input type="text" id="supabaseKey" value="sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf">
+        <label>管理员密码 (用于测试改名/删除):</label>
+        <input type="text" id="adminPassword" value="reset2024">
     </div>
-
-    <div class="nickname-card">
-        <div class="nickname-group">
-            <input type="text" id="nicknameInput" placeholder="输入你的昵称">
-            <button id="setNameBtn">设置昵称</button>
-        </div>
-        <div id="adminActions" class="admin-actions">
-            <button id="resetNameBtn">✏️ 修改任意昵称</button>
-            <button id="showUsersBtn">📋 用户列表</button>
-            <button id="exitAdminBtn" class="exit-admin">🚪 退出管理员</button>
-        </div>
-        <span id="adminBadge" style="display:none; font-size:0.7rem; color:#d97706; margin-left:10px;">👑 管理员模式</span>
+    <div class="stats">
+        <div class="stat">总操作数: <span id="totalOps">0</span></div>
+        <div class="stat">成功: <span id="successCount">0</span></div>
+        <div class="stat">失败: <span id="failCount">0</span></div>
+        <div class="stat">耗时: <span id="duration">0</span> ms</div>
     </div>
-
-    <div class="tab-nav">
-        <button class="tab-btn active" data-tab="tab1">📌 留言墙</button>
-        <button class="tab-btn" data-tab="tab2">💬 私信</button>
+    <div>
+        <button id="runTestBtn">▶ 开始并发测试 (50用户)</button>
+        <button id="clearDataBtn">🗑️ 清理测试数据 (删除 test_user_* 用户)</button>
     </div>
-
-    <div id="tab1" class="tab-content active">
-        <div class="whiteboard">
-            <div class="whiteboard-header"><h2><span>📌</span> 便利贴白板墙</h2><span style="font-size:12px; color:#aa9f89;">✨ 所有人可见</span></div>
-            <div class="sticky-input"><textarea id="publicContent" rows="3" placeholder="写张便利贴吧... 会贴在白板上 ✨"></textarea><button id="postPublicBtn">📝 贴上便利贴</button></div>
-            <div class="sticky-grid" id="publicList">加载中...</div>
-        </div>
-    </div>
-
-    <div id="tab2" class="tab-content">
-        <div class="private-layout">
-            <div class="contact-list">
-                <div class="contact-header"><span>📋 联系人</span><button class="new-chat-btn" id="newChatBtn">+ 新聊天</button></div>
-                <div class="contact-items" id="contactList">加载中...</div>
-            </div>
-            <div class="chat-area">
-                <div class="chat-header" id="chatHeader" style="display: none;"><div class="avatar" id="chatAvatar">?</div><h3 id="chatWithName">选择联系人</h3><button id="deleteUserBtn" class="delete-user-btn" style="display:none;">🗑️ 删除用户</button></div>
-                <div class="chat-messages" id="chatMessages"><div class="empty-chat">💬 从左列表选择一个联系人开始聊天</div></div>
-                <div class="chat-input-area" id="chatInputArea" style="display: none;"><input type="text" id="chatMessageInput" placeholder="输入消息..."><button id="sendChatBtn">发送</button></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="searchUserModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔍 搜索用户</h3><input type="text" id="searchUserInput" class="modal-search" placeholder="输入对方昵称..."><div id="searchResults" class="user-list-modal"><div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索</div></div><div class="modal-buttons"><button id="closeSearchModal">关闭</button></div></div></div></div>
-    <div id="userListModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>📋 所有用户</h3><input type="text" id="searchUserListInput" class="modal-search" placeholder="🔍 搜索用户..."><div id="allUsersList" class="user-list-modal">加载中...</div><div class="modal-buttons"><button id="closeUserListBtn">关闭</button></div></div></div></div>
-    <div id="adminLoginModal" style="display:none;"><div class="modal-overlay"><div class="modal-container"><h3>🔐 管理员登录</h3><input type="password" id="adminPasswordInput" class="modal-search" placeholder="请输入管理员密码"><div class="modal-buttons"><button id="confirmAdminLogin">登录</button><button id="cancelAdminLogin">取消</button></div></div></div></div>
-    <footer>💾 数据互通 | 便利贴所有人可见 | 私信仅双方可见 | 点击"+ 新聊天"搜索用户开始对话 | 昵称会自动保存，刷新不丢失</footer>
+    <div class="log" id="log"></div>
 </div>
 
 <script>
-    const SUPABASE_URL = "https://chfanuzhklzzawbcazjp.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_7yvNBNHbSe-2cPbQ-yiXpA_z6dr1DYf";
-    const ADMIN_PASSWORD = "reset2024";
+    let supabaseClient = null;
+    const logDiv = document.getElementById('log');
+    function log(msg, isError = false) {
+        const line = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        const p = document.createElement('div');
+        p.textContent = line;
+        if (isError) p.style.color = '#f87171';
+        else p.style.color = '#86efac';
+        logDiv.appendChild(p);
+        logDiv.scrollTop = logDiv.scrollHeight;
+        console.log(line);
+    }
 
-    let currentUser = "";
-    let isAdmin = false;
-    let currentContact = null;
-    let allUsersCache = [];
+    async function initSupabase() {
+        const url = document.getElementById('supabaseUrl').value;
+        const key = document.getElementById('supabaseKey').value;
+        if (!url || !key) {
+            alert('请填写 SUPABASE_URL 和 ANON_KEY');
+            return null;
+        }
+        return window.supabase.createClient(url, key);
+    }
 
-    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
-    function formatTime(ts) { let d = new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
+    function randomUsername() {
+        return `test_user_${Math.random().toString(36).substring(2, 10)}`;
+    }
 
-    async function fetchAPI(path, options = {}) {
-        let res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-            headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": `Bearer ${SUPABASE_ANON_KEY}`, "Content-Type": "application/json" },
-            ...options
+    async function createUser(supabase, username) {
+        const { error } = await supabase.from('users').insert({ username });
+        if (error && error.code !== '23505') {
+            return { success: false, error };
+        }
+        return { success: true };
+    }
+
+    async function postPublic(supabase, username, content) {
+        const { error } = await supabase.from('public_messages').insert({
+            username,
+            content,
+            timestamp: Date.now()
         });
-        return res;
+        return { success: !error, error };
     }
 
-    async function getAllUsers(forceRefresh = true) {
-        let users = new Set();
-        try {
-            let publics = await (await fetchAPI(`public_messages?select=username`)).json();
-            publics.forEach(m => { if(m.username) users.add(m.username); });
-            let privates = await (await fetchAPI(`private_messages?select=fromUser,toUser`)).json();
-            privates.forEach(m => { if(m.fromUser) users.add(m.fromUser); if(m.toUser) users.add(m.toUser); });
-        } catch(e) { console.error(e); }
-        let result = Array.from(users).filter(u => u && u !== currentUser);
-        if (forceRefresh) allUsersCache = result;
-        return result;
+    async function sendPrivate(supabase, fromUser, toUser, content) {
+        const { error } = await supabase.from('private_messages').insert({
+            fromUser,
+            toUser,
+            content,
+            timestamp: Date.now()
+        });
+        return { success: !error, error };
     }
 
-    async function deleteUserData(username) {
-        if (!confirm(`⚠️ 确定要永久删除用户 "${username}" 吗？\n\n这将删除该用户的所有留言和私信！\n此操作不可恢复！`)) return false;
-        try {
-            let publics = await (await fetchAPI(`public_messages?username=eq.${username}`)).json();
-            for (let msg of publics) await fetchAPI(`public_messages?id=eq.${msg.id}`, { method: "DELETE" });
-            let privates = await (await fetchAPI(`private_messages?or=(fromUser.eq.${username},toUser.eq.${username})`)).json();
-            for (let msg of privates) await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "DELETE" });
-            alert(`✅ 用户 "${username}" 已删除`);
-            return true;
-        } catch(e) { alert("删除失败：" + e.message); return false; }
+    async function adminRename(supabase, oldName, newName) {
+        const { data, error } = await supabase.rpc('admin_rename_user', { old_name: oldName, new_name: newName });
+        return { success: !error, error };
     }
 
-    async function getContacts() {
-        if (!currentUser) return [];
-        let users = new Set();
-        try {
-            let res = await fetchAPI(`private_messages?select=fromUser,toUser`);
-            let data = await res.json();
-            data.forEach(m => {
-                if (m.fromUser === currentUser) users.add(m.toUser);
-                if (m.toUser === currentUser) users.add(m.fromUser);
-            });
-        } catch(e) { console.error(e); }
-        let allValidUsers = await getAllUsers(false);
-        return Array.from(users).filter(u => allValidUsers.includes(u) || u === currentUser);
+    async function adminDelete(supabase, username) {
+        const { error } = await supabase.rpc('admin_delete_user', { target_name: username });
+        return { success: !error, error };
     }
 
-    async function getMessagesWith(user) {
-        try {
-            let res = await fetchAPI(`private_messages?order=timestamp.asc&or=(fromUser.eq.${currentUser},toUser.eq.${currentUser})`);
-            let data = await res.json();
-            return data.filter(m => (m.fromUser === currentUser && m.toUser === user) || (m.fromUser === user && m.toUser === currentUser));
-        } catch(e) { return []; }
-    }
-
-    async function loadPublic() {
-        try {
-            let res = await fetchAPI(`public_messages?order=timestamp.desc`);
-            let data = await res.json();
-            let container = document.getElementById("publicList");
-            if (!data || data.length === 0) { container.innerHTML = '<div class="empty-sticky">📌 还没有便利贴</div>'; return; }
-            container.innerHTML = "";
-            data.forEach(msg => {
-                let canDelete = (currentUser === msg.username) || isAdmin;
-                container.innerHTML += `<div class="sticky-note"><div class="sticky-header"><span class="sticky-author">✏️ ${escapeHtml(msg.username)}</span><span class="sticky-time">${formatTime(msg.timestamp)}</span></div><div class="sticky-content">${escapeHtml(msg.content)}</div><div class="sticky-footer">${canDelete ? `<button class="delete-sticky" onclick="deletePublic(${msg.id})">🗑️ 撕掉</button>` : ''}</div></div>`;
-            });
-        } catch(e) { document.getElementById("publicList").innerHTML = '<div class="empty-sticky">⚠️ 加载失败</div>'; }
-    }
-
-    async function loadContacts() {
-        if (!currentUser) { document.getElementById("contactList").innerHTML = '<div class="empty-contact">请先设置昵称</div>'; return; }
-        let contacts = await getContacts();
-        let container = document.getElementById("contactList");
-        if (contacts.length === 0) { container.innerHTML = '<div class="empty-contact">💬 暂无联系人<br>点击"+ 新聊天"搜索用户开始对话</div>'; return; }
-        container.innerHTML = "";
-        for (let contact of contacts) {
-            let msgs = await getMessagesWith(contact);
-            let lastMsg = msgs.length ? msgs[msgs.length-1].content : "";
-            container.innerHTML += `<div class="contact-item" onclick="selectContact('${escapeHtml(contact)}')"><div class="contact-avatar">${escapeHtml(contact.charAt(0).toUpperCase())}</div><div class="contact-info"><div class="contact-name">${escapeHtml(contact)}</div><div class="contact-preview">${escapeHtml(lastMsg.slice(0,30))}</div></div><div class="contact-badge">${msgs.length}</div></div>`;
-        }
-        if (currentContact) {
-            let highlight = document.querySelector(`.contact-item[onclick="selectContact('${currentContact}')"]`);
-            if (highlight) highlight.classList.add("active");
-        }
-    }
-
-    async function selectContact(contact, autoFocus = true) {
-        if (!currentUser) return;
-        let users = await getAllUsers(false);
-        if (!users.includes(contact) && contact !== currentUser) {
-            alert("该用户已被删除");
-            currentContact = null;
-            document.getElementById("chatHeader").style.display = "none";
-            document.getElementById("chatInputArea").style.display = "none";
-            document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户不存在，请选择其他联系人</div>';
-            await loadContacts();
+    async function runConcurrentTest() {
+        const supabase = await initSupabase();
+        if (!supabase) return;
+        const startTime = performance.now();
+        let success = 0;
+        let fail = 0;
+        let total = 0;
+        const updateStats = () => {
+            document.getElementById('totalOps').innerText = total;
+            document.getElementById('successCount').innerText = success;
+            document.getElementById('failCount').innerText = fail;
+        };
+        
+        log('🚀 开始 50 用户并发测试...');
+        
+        const userCount = 50;
+        const users = Array.from({ length: userCount }, () => randomUsername());
+        
+        log(`📝 准备创建 ${userCount} 个测试用户...`);
+        const createPromises = users.map(async (u) => {
+            total++;
+            const result = await createUser(supabase, u);
+            if (result.success) { success++; log(`✅ 创建用户 ${u} 成功`); }
+            else { fail++; log(`❌ 创建用户 ${u} 失败: ${result.error?.message}`, true); }
+            updateStats();
+            return { username: u, success: result.success };
+        });
+        const createResults = await Promise.all(createPromises);
+        const validUsers = createResults.filter(r => r.success).map(r => r.username);
+        log(`📊 成功创建 ${validUsers.length} 个有效用户`);
+        
+        if (validUsers.length < 2) {
+            log('⚠️ 有效用户不足 2 个，无法继续测试私信', true);
             return;
         }
-        currentContact = contact;
-        let msgs = await getMessagesWith(contact);
-        let container = document.getElementById("chatMessages");
-        if (msgs.length === 0) { container.innerHTML = '<div class="empty-chat">💬 没有消息，发一条吧～</div>'; }
-        else {
-            container.innerHTML = "";
-            msgs.forEach(m => {
-                let isSender = (m.fromUser === currentUser);
-                let canDelete = isSender || isAdmin;
-                container.innerHTML += `<div class="chat-bubble ${isSender ? 'bubble-sent' : 'bubble-received'}"><div class="bubble-content">${escapeHtml(m.content)}</div><div class="bubble-info"><span>${formatTime(m.timestamp)}</span>${canDelete ? `<button style="background:none; border:none; color:#94a3b8; cursor:pointer;" onclick="deletePrivateMsg(${m.id})">删除</button>` : ''}</div></div>`;
-            });
-            container.scrollTop = container.scrollHeight;
-        }
-        document.getElementById("chatHeader").style.display = "flex";
-        document.getElementById("chatInputArea").style.display = "flex";
-        document.getElementById("chatAvatar").innerText = contact.charAt(0).toUpperCase();
-        document.getElementById("chatWithName").innerText = contact;
-        if (autoFocus) document.getElementById("chatMessageInput").focus();
-        document.getElementById("deleteUserBtn").style.display = (isAdmin && contact !== currentUser) ? "inline-block" : "none";
-        document.querySelectorAll(".contact-item").forEach(el => el.classList.remove("active"));
-        let highlight = document.querySelector(`.contact-item[onclick="selectContact('${contact}')"]`);
-        if (highlight) highlight.classList.add("active");
-    }
-
-    async function sendPrivateMessage(toUser, content) {
-        if (!content.trim()) return false;
-        let users = await getAllUsers(false);
-        if (!users.includes(toUser)) { alert("对方用户不存在，无法发送"); return false; }
-        let res = await fetchAPI(`private_messages`, { method: "POST", body: JSON.stringify({ fromUser: currentUser, toUser: toUser, content: content.trim(), timestamp: Date.now() }) });
-        return res.ok;
-    }
-
-    async function openChatWithUser(toUser) {
-        if (!currentUser) { alert("请先设置昵称"); return; }
-        if (toUser === currentUser) { alert("不能和自己聊天"); return; }
-        let users = await getAllUsers(true);
-        if (!users.includes(toUser)) { alert(`用户 "${toUser}" 不存在`); document.getElementById("searchUserModal").style.display = "none"; return; }
-        document.getElementById("searchUserModal").style.display = "none";
-        await loadContacts();
-        await selectContact(toUser, true);
-    }
-
-    async function searchUsers() {
-        let keyword = document.getElementById("searchUserInput").value.trim().toLowerCase();
-        let resultsDiv = document.getElementById("searchResults");
-        if (keyword === "") { resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>'; return; }
-        let users = await getAllUsers(true);
-        let filtered = users.filter(u => u.toLowerCase().includes(keyword) && u !== currentUser);
-        if (filtered.length === 0) { resultsDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">😢 没有找到匹配的用户</div>'; return; }
-        resultsDiv.innerHTML = filtered.map(user => `<div class="user-item"><div><span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span><span>${escapeHtml(user)}</span></div><button class="user-select-btn" onclick="openChatWithUser('${escapeHtml(user)}')">💬 发消息</button></div>`).join('');
-    }
-
-    async function openSearchModal() {
-        if (!currentUser) { alert("请先设置昵称"); return; }
-        document.getElementById("searchUserInput").value = "";
-        document.getElementById("searchResults").innerHTML = '<div style="text-align:center; padding:20px; color:#94a3b8;">输入关键词搜索用户</div>';
-        await getAllUsers(true);
-        document.getElementById("searchUserModal").style.display = "flex";
-        setTimeout(() => document.getElementById("searchUserInput").focus(), 100);
-    }
-
-    async function sendToCurrent() {
-        if (!currentUser) { alert("请先设置昵称"); return; }
-        if (!currentContact) { alert("请先从左侧选择一个联系人"); return; }
-        let content = document.getElementById("chatMessageInput").value.trim();
-        if (!content) { alert("输入消息内容"); return; }
-        let originalContent = content;
-        document.getElementById("chatMessageInput").value = "";
-        let success = await sendPrivateMessage(currentContact, originalContent);
-        if (success) {
-            await loadContacts();
-            await selectContact(currentContact, false);
-            document.getElementById("chatMessageInput").focus();
-        } else { alert("发送失败"); document.getElementById("chatMessageInput").value = originalContent; }
-    }
-
-    async function postPublic() {
-        if (!currentUser) { alert("请先设置昵称"); return; }
-        let content = document.getElementById("publicContent").value.trim();
-        if (!content) { alert("写点内容吧～"); return; }
-        let btn = document.getElementById("postPublicBtn");
-        btn.innerText = "张贴中...";
-        btn.disabled = true;
-        let res = await fetchAPI(`public_messages`, { method: "POST", body: JSON.stringify({ username: currentUser, content: content, timestamp: Date.now() }) });
-        if (res.ok) { document.getElementById("publicContent").value = ""; await loadPublic(); alert("✅ 便利贴贴上啦！"); }
-        else alert("发布失败");
-        btn.innerText = "📝 贴上便利贴";
-        btn.disabled = false;
-    }
-
-    async function deletePublic(id) { if (!confirm("撕掉这张便利贴？")) return; await fetchAPI(`public_messages?id=eq.${id}`, { method: "DELETE" }); await loadPublic(); }
-    async function deletePrivateMsg(id) { if (!confirm("删除这条消息？")) return; await fetchAPI(`private_messages?id=eq.${id}`, { method: "DELETE" }); if (currentContact) await selectContact(currentContact, false); await loadContacts(); }
-
-    // ✅ 设置昵称 - 持久化保存到 localStorage
-    async function setUserName() {
-        let newName = document.getElementById("nicknameInput").value.trim();
-        if (!newName) { alert("请输入昵称"); return; }
         
-        // 检查昵称是否已被使用
-        let users = await getAllUsers(true);
-        if (users.includes(newName)) { 
-            alert("❌ 该昵称已被使用，请换一个"); 
-            return; 
+        log('📢 并发发布公开留言...');
+        const publicPromises = validUsers.map(async (u) => {
+            total++;
+            const content = `测试留言 from ${u} at ${Date.now()}`;
+            const result = await postPublic(supabase, u, content);
+            if (result.success) { success++; log(`✅ 用户 ${u} 发布公开留言成功`); }
+            else { fail++; log(`❌ 用户 ${u} 发布公开留言失败: ${result.error?.message}`, true); }
+            updateStats();
+        });
+        await Promise.all(publicPromises);
+        
+        log('💬 并发发送私信 (随机配对)...');
+        const privatePromises = [];
+        for (let i = 0; i < validUsers.length; i++) {
+            const from = validUsers[i];
+            let to = validUsers[Math.floor(Math.random() * validUsers.length)];
+            while (to === from && validUsers.length > 1) {
+                to = validUsers[Math.floor(Math.random() * validUsers.length)];
+            }
+            total++;
+            const content = `私信测试 from ${from} to ${to} at ${Date.now()}`;
+            const result = await sendPrivate(supabase, from, to, content);
+            if (result.success) { success++; log(`✅ ${from} -> ${to} 私信发送成功`); }
+            else { fail++; log(`❌ ${from} -> ${to} 私信发送失败: ${result.error?.message}`, true); }
+            updateStats();
+        }
+        await Promise.all(privatePromises);
+        
+        log('👑 开始管理员操作测试 (改名 + 删除)...');
+        if (validUsers.length >= 2) {
+            const renameTarget = validUsers[0];
+            const newName = renameTarget + "_renamed";
+            total++;
+            const renameResult = await adminRename(supabase, renameTarget, newName);
+            if (renameResult.success) {
+                success++;
+                log(`✅ 管理员改名 ${renameTarget} -> ${newName} 成功`);
+                validUsers[0] = newName;
+            } else {
+                fail++;
+                log(`❌ 管理员改名失败: ${renameResult.error?.message}`, true);
+            }
+            updateStats();
+            
+            const deleteTarget = validUsers[validUsers.length - 1];
+            total++;
+            const deleteResult = await adminDelete(supabase, deleteTarget);
+            if (deleteResult.success) {
+                success++;
+                log(`✅ 管理员删除用户 ${deleteTarget} 成功`);
+            } else {
+                fail++;
+                log(`❌ 管理员删除用户 ${deleteTarget} 失败: ${deleteResult.error?.message}`, true);
+            }
+            updateStats();
         }
         
-        currentUser = newName;
-        // 保存到 localStorage，刷新页面不会丢失
-        localStorage.setItem("wall_user_saved", currentUser);
-        document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
-        document.getElementById("nicknameInput").disabled = true;
-        document.getElementById("setNameBtn").disabled = true;
-        document.getElementById("nicknameInput").value = currentUser;
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        document.getElementById('duration').innerText = Math.round(duration);
+        log(`🏁 测试完成！总耗时 ${duration.toFixed(0)} ms`);
+        log(`📈 总操作: ${total}, 成功: ${success}, 失败: ${fail}, 成功率: ${(success/total*100).toFixed(2)}%`);
         
-        await loadContacts();
-        alert(`✅ 昵称 "${currentUser}" 设置成功！刷新页面不会丢失`);
-    }
-
-    // 管理员修改用户名（保留所有聊天记录）
-    async function adminChangeName() {
-        let oldName = prompt("输入要修改的用户昵称：");
-        if (!oldName) return;
-        let newName = prompt("输入新昵称：");
-        if (!newName) return;
-        
-        // 1. 更新公开留言中的用户名
-        let publics = await (await fetchAPI(`public_messages?username=eq.${oldName}`)).json();
-        for (let msg of publics) {
-            await fetchAPI(`public_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ username: newName }) });
+        if (fail > 0) {
+            log('⚠️ 测试中存在失败，请检查控制台详细错误。可能原因: 限流(429)、数据库函数未创建、网络延迟等。');
+        } else {
+            log('🎉 所有并发操作成功！系统稳定性良好。');
         }
-        
-        // 2. 更新私信中的用户名（作为发送者）
-        let sentPrivates = await (await fetchAPI(`private_messages?fromUser=eq.${oldName}`)).json();
-        for (let msg of sentPrivates) {
-            await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ fromUser: newName }) });
-        }
-        
-        // 3. 更新私信中的用户名（作为接收者）
-        let receivedPrivates = await (await fetchAPI(`private_messages?toUser=eq.${oldName}`)).json();
-        for (let msg of receivedPrivates) {
-            await fetchAPI(`private_messages?id=eq.${msg.id}`, { method: "PATCH", body: JSON.stringify({ toUser: newName }) });
-        }
-        
-        // 4. 如果当前用户就是被修改的用户，更新界面和 localStorage
-        if (currentUser === oldName) {
-            currentUser = newName;
-            localStorage.setItem("wall_user_saved", currentUser);
-            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
-            document.getElementById("nicknameInput").value = currentUser;
-        }
-        
-        // 5. 如果当前正在和这个用户聊天，更新聊天界面标题
-        if (currentContact === oldName) {
-            currentContact = newName;
-            document.getElementById("chatWithName").innerText = newName;
-            document.getElementById("chatAvatar").innerText = newName.charAt(0).toUpperCase();
-        }
-        
-        // 6. 刷新所有数据
-        await loadPublic();
-        await loadContacts();
-        await getAllUsers(true);
-        
-        alert(`✅ 用户 "${oldName}" 已改名为 "${newName}"，所有聊天记录已保留`);
-    }
-
-    async function openUserListModal() {
-        if (!isAdmin) return;
-        let users = await getAllUsers(true);
-        document.getElementById("allUsersList").innerHTML = users.map(user => `<div class="user-item"><div><span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span><span>${escapeHtml(user)}</span></div><button class="user-delete-btn" onclick="adminDeleteUserFromList('${escapeHtml(user)}')">🗑️ 删除</button></div>`).join('');
-        document.getElementById("userListModal").style.display = "flex";
-        document.getElementById("searchUserListInput").value = "";
-        document.getElementById("searchUserListInput").oninput = function() {
-            let keyword = this.value.trim().toLowerCase();
-            let filtered = users.filter(u => u.toLowerCase().includes(keyword));
-            document.getElementById("allUsersList").innerHTML = filtered.map(user => `<div class="user-item"><div><span class="user-avatar-small">${escapeHtml(user.charAt(0).toUpperCase())}</span><span>${escapeHtml(user)}</span></div><button class="user-delete-btn" onclick="adminDeleteUserFromList('${escapeHtml(user)}')">🗑️ 删除</button></div>`).join('');
-        };
     }
     
-    async function adminDeleteUserFromList(username) {
-        if (username === currentUser) { alert("不能删除自己"); return; }
-        let success = await deleteUserData(username);
-        if (success) {
-            document.getElementById("userListModal").style.display = "none";
-            await loadPublic();
-            await loadContacts();
-            if (currentContact === username) {
-                currentContact = null;
-                document.getElementById("chatHeader").style.display = "none";
-                document.getElementById("chatInputArea").style.display = "none";
-                document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户已删除</div>';
-            }
-            await getAllUsers(true);
+    async function cleanupTestUsers() {
+        const supabase = await initSupabase();
+        if (!supabase) return;
+        if (!confirm('⚠️ 此操作将永久删除所有以 test_user_ 开头的用户及其留言、私信。不可恢复！确定继续？')) return;
+        log('🧹 开始清理测试数据...');
+        const { data: users, error } = await supabase.from('users').select('username').like('username', 'test_user_%');
+        if (error) {
+            log(`获取测试用户失败: ${error.message}`, true);
+            return;
         }
-    }
-
-    function openAdminLogin() { document.getElementById("adminLoginModal").style.display = "flex"; document.getElementById("adminPasswordInput").value = ""; }
-    function verifyAdmin() {
-        let pwd = document.getElementById("adminPasswordInput").value;
-        if (pwd === ADMIN_PASSWORD) {
-            isAdmin = true;
-            document.getElementById("adminBadge").style.display = "inline-block";
-            document.getElementById("adminActions").style.display = "flex";
-            document.getElementById("adminLoginModal").style.display = "none";
-            alert("✅ 管理员模式已启用");
-            loadPublic();
-            if (currentContact) selectContact(currentContact, false);
-            document.getElementById("userDropdown").classList.remove("show");
-        } else alert("❌ 密码错误");
-    }
-    function exitAdmin() {
-        isAdmin = false;
-        document.getElementById("adminBadge").style.display = "none";
-        document.getElementById("adminActions").style.display = "none";
-        document.getElementById("deleteUserBtn").style.display = "none";
-        alert("已退出管理员模式");
-        loadPublic();
-        if (currentContact) selectContact(currentContact, false);
-    }
-
-    document.getElementById("userMenu").addEventListener("click", (e) => { e.stopPropagation(); document.getElementById("userDropdown").classList.toggle("show"); });
-    document.addEventListener("click", () => { document.getElementById("userDropdown").classList.remove("show"); });
-    document.querySelectorAll(".tab-btn").forEach(btn => { btn.addEventListener("click", () => { document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active")); btn.classList.add("active"); document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active")); document.getElementById(btn.dataset.tab).classList.add("active"); if (btn.dataset.tab === "tab2" && currentUser) loadContacts(); }); });
-
-    async function init() {
-        window.deletePublic = deletePublic;
-        window.deletePrivateMsg = deletePrivateMsg;
-        window.selectContact = selectContact;
-        window.adminDeleteUserFromList = adminDeleteUserFromList;
-        window.sendToCurrent = sendToCurrent;
-        window.openChatWithUser = openChatWithUser;
-        
-        // ✅ 从 localStorage 读取保存的昵称
-        let savedUser = localStorage.getItem("wall_user_saved");
-        if (savedUser && savedUser.trim() !== "") {
-            currentUser = savedUser;
-            document.getElementById("currentUserBadge").innerHTML = `👤 ${escapeHtml(currentUser)} ▼`;
-            document.getElementById("nicknameInput").disabled = true;
-            document.getElementById("setNameBtn").disabled = true;
-            document.getElementById("nicknameInput").value = currentUser;
-        }
-        
-        document.getElementById("setNameBtn").onclick = setUserName;
-        document.getElementById("adminLoginBtn").onclick = openAdminLogin;
-        document.getElementById("confirmAdminLogin").onclick = verifyAdmin;
-        document.getElementById("cancelAdminLogin").onclick = () => document.getElementById("adminLoginModal").style.display = "none";
-        document.getElementById("exitAdminBtn").onclick = exitAdmin;
-        document.getElementById("resetNameBtn").onclick = adminChangeName;
-        document.getElementById("showUsersBtn").onclick = openUserListModal;
-        document.getElementById("postPublicBtn").onclick = postPublic;
-        document.getElementById("sendChatBtn").onclick = sendToCurrent;
-        document.getElementById("newChatBtn").onclick = openSearchModal;
-        document.getElementById("closeSearchModal").onclick = () => document.getElementById("searchUserModal").style.display = "none";
-        document.getElementById("closeUserListBtn").onclick = () => document.getElementById("userListModal").style.display = "none";
-        document.getElementById("deleteUserBtn").onclick = () => { if (currentContact && confirm(`⚠️ 确定要永久删除用户 "${currentContact}" 吗？`)) { deleteUserData(currentContact).then(() => { loadContacts(); if (currentContact === currentContact) { currentContact = null; document.getElementById("chatHeader").style.display = "none"; document.getElementById("chatInputArea").style.display = "none"; document.getElementById("chatMessages").innerHTML = '<div class="empty-chat">💬 用户已删除</div>'; } getAllUsers(true); }); } };
-        
-        document.getElementById("searchUserInput").addEventListener("input", searchUsers);
-        document.getElementById("chatMessageInput").addEventListener("keypress", (e) => { if(e.key === 'Enter') sendToCurrent(); });
-        
-        await loadPublic();
-        if (currentUser) await loadContacts();
-        
-        setInterval(async () => {
-            await loadPublic();
-            if (currentUser) {
-                await loadContacts();
-                if (currentContact) await selectContact(currentContact, false);
+        let deleted = 0;
+        for (const u of users) {
+            const { error: delErr } = await supabase.rpc('admin_delete_user', { target_name: u.username });
+            if (delErr) {
+                log(`删除 ${u.username} 失败: ${delErr.message}`, true);
+            } else {
+                deleted++;
+                log(`✅ 已删除 ${u.username}`);
             }
-        }, 15000);
+        }
+        log(`🎉 清理完成，共删除 ${deleted} 个测试用户。`);
     }
-    init();
+    
+    document.getElementById('runTestBtn').addEventListener('click', runConcurrentTest);
+    document.getElementById('clearDataBtn').addEventListener('click', cleanupTestUsers);
 </script>
 </body>
 </html>
